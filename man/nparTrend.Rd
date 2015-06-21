@@ -2,13 +2,11 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{nparTrend}
 \alias{nparTrend}
-\title{Box and Cox tests and Ljung
-Use Mann-Kendall test (MK) and the Seasonal and the Regional Kendall Tests for trend (SKT and RKT) and Theil-Sen's slope estimator for checking trend}
+\title{Box and Cox tests and Ljung}
 \usage{
 nparTrend(x, ...)
 }
 \description{
-Box and Cox tests and Ljung
 Use Mann-Kendall test (MK) and the Seasonal and the Regional Kendall Tests for trend (SKT and RKT) and Theil-Sen's slope estimator for checking trend
 }
 
