@@ -6,7 +6,21 @@
 \usage{
 tsSummary(P, A)
 }
+\arguments{
+\item{P}{forecast object}
+
+\item{A}{data vector of sample for testing. Must have same length as P}
+}
+\value{
+accuracy data.frame
+}
 \description{
-Default summary function
+Return accuracy statistics for the forecast model. See \code{\link{accuracy}}
+}
+\examples{
+fcnm <- forecastMethod(lynx)
+fun <- get(fcnm[[1]])
+fit <- fun(AirPassengers, h=10, onlyfc = FALSE)
+class(out <- tsSummary(fit))
 }
 

@@ -6,7 +6,22 @@
 \usage{
 linearityTest(x, Test)
 }
+\arguments{
+\item{x}{'ts' data}
+
+\item{Test}{string containing test's names. They are "terasvirta", "white", "keenan", "mcleodLi", "tsay", "tarTest".}
+}
+\value{
+data.frame with tests statistics and p.values
+}
 \description{
-Linearity tests
+Compute six linearity tests among Terasvirta, White, Keenan, McleodLi, Tsay and Tar.
+}
+\examples{
+linearityTest(AirPassengers)
+linearityTest(AirPassengers, Test="tsay")
+}
+\seealso{
+See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{McLeod.Li.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
 }
 

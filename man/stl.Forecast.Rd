@@ -6,7 +6,27 @@
 \usage{
 stl.Forecast(x, h, level = 95, method = "ets", onlyfc = TRUE, ...)
 }
+\arguments{
+\item{x}{'ts' data}
+
+\item{h}{forecast horizon}
+
+\item{level}{confidence level. Default is 95%}
+
+\item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
+
+\item{...}{extra args, if needed.}
+}
+\value{
+forecasts from ts data or an object of class 'forecast'
+}
 \description{
 Stl forecast wrapper
+}
+\examples{
+fit <- stl.Forecast(AirPassengers, h=10, onlyfc = FALSE)
+plot(fit)
+Mresid(fit)
+tsSummary(fit)
 }
 

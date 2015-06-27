@@ -2,15 +2,18 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{forecastMethod}
 \alias{forecastMethod}
-\title{Choose best method based on trend and linearity}
+\title{Find best forecast methods based on trend and linearity}
 \usage{
 forecastMethod(x)
-
-forecastMethod(x)
+}
+\arguments{
+\item{x}{ts object, univariate time series}
 }
 \description{
-Choose best method based on trend and linearity
-
-Find best forecast methods based on trend and linearity
+Automatically estimates the most adequate forecasts method for a 'ts' object based on linearity and trend tests and return a list containing all functions names. See \code{\link{nparTrend}} and \code{\link{nlTests}} for more.
+}
+\examples{
+forecastMethod(lynx)
+forecastMethod(AirPassengers)
 }
 

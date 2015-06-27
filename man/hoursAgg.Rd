@@ -2,11 +2,11 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{hoursAgg}
 \alias{hoursAgg}
-\title{TSAgg Extra function 3}
+\title{Hours Extra function}
 \usage{
 hoursAgg(data, process, multiple = 1, na.rm = FALSE, tz = "GMT")
 }
 \description{
-TSAgg Extra function 3
+Hours Extra function
 }
 

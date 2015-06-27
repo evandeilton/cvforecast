@@ -7,7 +7,25 @@
 descritiva(x, basic = TRUE, desc = TRUE, norm = FALSE, p = 0.95,
   dig = 6)
 }
+\arguments{
+\item{x}{data object}
+
+\item{basic}{if TRUE returns only basic descryptive statistics}
+
+\item{desc}{if TRUE returns also hypothesis test for the mean}
+
+\item{norm}{if TRUE returns also skewness and kurtosis}
+
+\item{p}{level for confidence interval. Default is 0.95}
+
+\item{digits}{output length of numeric data}
+
+\item{...}{extra args, if needed.}
+}
 \description{
-Descriptive analysis
+Perform Descriptive analysis on vector, matrix or data.frame
+}
+\examples{
+descritiva(mtcars[,1:3])
 }
 

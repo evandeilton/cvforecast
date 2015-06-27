@@ -6,7 +6,28 @@
 \usage{
 switch.cvforecast(x, nmodelo, h, level = 95, onlyfc = FALSE)
 }
+\arguments{
+\item{x}{'ts' data}
+
+\item{nmodelo}{string with forecast wraper, eg. etsForecast}
+
+\item{h}{forecast horizon}
+
+\item{level}{confidence level. Default is 95%}
+
+\item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
+
+\item{...}{extra args, if needed.}
+}
+\value{
+forecasts from ts data or an object of class 'forecast'
+}
 \description{
-Switcher of time series forecast methods
+Auxiliary switcher that helps the forecasting process. If you pass it a forecast wrapper it returns the forecast model.
+}
+\examples{
+fit <- switch.cvforecast(AirPassengers, "etsForecast", h=20, level=95)
+class(fit)
+plot(fit)
 }
 

@@ -6,7 +6,16 @@
 \usage{
 nparTrend(x, ...)
 }
+\arguments{
+\item{x}{'ts' data}
+}
+\value{
+trend analysis statistics. See \code{\link{rkt}} for more information about tests
+}
 \description{
 Use Mann-Kendall test (MK) and the Seasonal and the Regional Kendall Tests for trend (SKT and RKT) and Theil-Sen's slope estimator for checking trend
+}
+\examples{
+nparTrend(AirPassengers)
 }
 

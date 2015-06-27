@@ -6,7 +6,18 @@
 \usage{
 LjungBtest_Acuracia(model, ...)
 }
+\arguments{
+\item{model}{A forecast model. See \code{\link{cvts2}}.}
+
+\item{...}{extra args, if needed.}
+}
 \description{
-Box and Cox tests and Ljung
+Performs Ljung and Box test and also Durbin-Watson both for autocorrelation on the residuals from the model. It returns also accuracy statistics. See \code{\link{accuracy}}, \code{\link{Box.test}}, \code{\link{dwtest}}.
+}
+\examples{
+x <- AirPassengers
+fit <- auto.arimaForecast(x, h = 10, onlyfc=FALSE)
+LjungBtest_Acuracia(fit)
+plot(fit)
 }
 

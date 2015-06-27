@@ -2,11 +2,29 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{TimeSeries}
 \alias{TimeSeries}
-\title{TSAgg Extra function 1}
+\title{Convert char dates in Dates keeping data}
 \usage{
 TimeSeries(dates, dateformat, data = NULL, tz = "GMT")
 }
+\arguments{
+\item{dates}{char vector of dates same length of data}
+
+\item{dateformat}{date format, eg. "%d/%m/%Y %H:%M:%S". See \code{\link{strptime}} for more information and examples}
+
+\item{data}{data numeric vector, matrix or data.frame containing time series data}
+
+\item{tz}{time zone. It gets the system date}
+}
+\value{
+data.frame with split dates and values
+}
 \description{
-TSAgg Extra function 1
+Convert a data.frame with dates and numeric values into a new one including year, month, day, minute and second generated trough the \code{dateformat} applied to the original dates.
+}
+\examples{
+dates <- as.character(as.POSIXct(as.Date(time(AirPassengers))+1))
+value <- as.numeric(AirPassengers)
+dateformat <- "\%Y-\%m-\%d \%H:\%M:\%S"
+y <- TimeSeries(dates, dateformat, value)
 }
 

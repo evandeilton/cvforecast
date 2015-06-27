@@ -7,9 +7,49 @@
 cvForecastControl(stepSize = 1, maxHorizon = 1, minObs = 2 *
   max(cycle(x)), fixedWindow = TRUE, summaryFunc = tsSummary,
   preProcess = FALSE, ppMethod = "guerrero", cvMethod = "MAPE",
-  tsfrequency = "month", OutlierClean = TRUE)
+  tsfrequency = "month", OutlierClean = TRUE,
+  dateformat = "\%d/\%m/\%Y \%H:\%M:\%S")
+}
+\arguments{
+\item{stepSize}{size step for the cross-validation samples}
+
+\item{maxHorizon}{forecasting horizon}
+
+\item{minObs}{minumum number of observation. Default is two times cycle of data}
+
+\item{fixedWindow}{keep fixed the sampling window, default is TRUE}
+
+\item{summaryFunc}{extra function to compute statistics of the model}
+
+\item{preProcess}{if TRUE does Box-Cox data transformation in to the data}
+
+\item{ppMethod}{if 'preProcess' is TRUE make 'guerrero' or 'loglik' tranformation. See \code{\link{BoxCox.lambda}}}
+
+\item{tsfrequency}{time series data frequency}
+
+\item{OutlierClean}{if TRUE, remove outliers from the data. See \code{\link{tsclean}}}
+
+\item{dateformat}{date format for charater dates}
+}
+\value{
+list of parameters
 }
 \description{
 Default Cross-validation control
+}
+\examples{
+# Control
+myControl <- cvForecastControl(
+minObs = 14,
+stepSize = 5,
+maxHorizon = 30,
+fixedWindow=TRUE,
+preProcess=FALSE,
+ppMethod='guerrero',
+summaryFunc=tsSummary,
+cvMethod="MAPE",
+tsfrequency='day',
+OutlierClean=FALSE)
+myControl
 }
 

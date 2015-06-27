@@ -8,9 +8,45 @@ meanForecast(x, h, level = 95, onlyfc = TRUE, ...)
 
 meanForecast(x, h, level = 95, onlyfc = TRUE, ...)
 }
+\arguments{
+\item{x}{'ts' data}
+
+\item{h}{forecast horizon}
+
+\item{level}{confidence level. Default is 95%}
+
+\item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
+
+\item{...}{extra args, if needed.}
+
+\item{x}{'ts' data}
+
+\item{h}{forecast horizon}
+
+\item{level}{confidence level. Default is 95%}
+
+\item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
+
+\item{...}{extra args, if needed.}
+}
+\value{
+forecasts from ts data or an object of class 'forecast'
+
+forecasts from ts data or an object of class 'forecast'
+}
 \description{
 Mean forecast wrapper
 
 Meanf forecast wrapper
+}
+\examples{
+fit <- meanForecast(AirPassengers, h=10, onlyfc = FALSE)
+plot(fit)
+Mresid(fit)
+tsSummary(fit)
+fit <- meanForecast(AirPassengers, h=10, onlyfc = FALSE)
+plot(fit)
+Mresid(fit)
+tsSummary(fit)
 }
 

@@ -2,11 +2,23 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{ordem_diferencas}
 \alias{ordem_diferencas}
-\title{Autofind time sieries number of differences}
+\title{Auto-find time series number of differences}
 \usage{
 ordem_diferencas(x, alpha = 0.05, plot = TRUE, ...)
 }
+\arguments{
+\item{x}{ts data object}
+
+\item{alpha}{confidence level for internal tests}
+
+\item{plot}{if TRUE plot results}
+
+\item{...}{extra args, if needed.}
+}
 \description{
-Autofind time sieries number of differences
+Try to find number of differentiations before a time series become stationary. See \code{\link{ndiffs}} for more details about techniques of decision.
+}
+\examples{
+ordem_diferencas(AirPassengers)
 }
 

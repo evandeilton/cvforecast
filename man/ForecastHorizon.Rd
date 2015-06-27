@@ -2,11 +2,28 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{ForecastHorizon}
 \alias{ForecastHorizon}
-\title{Generate forecast horizon time sequency}
+\title{Generate forecast horizon time sequence}
 \usage{
 ForecastHorizon(XtsData, tsfrequency, horizon)
 }
+\arguments{
+\item{XtsData}{input data set}
+
+\item{tsfrequency}{data frequency. It can be "year", "month", "day", "hour", "min" or "sec"}
+
+\item{horizon}{number representing total amount of points to generate the sequency of dates for the forecasts}
+}
+\value{
+A lista conatining data transformed to ts and a date sequency for the forecasts
+}
 \description{
-Generate forecast horizon time sequency
+Suport several data types included xts, zoo, ts or numeric. If numeric data are input, R try to build a date pattern based on sysdate().
+}
+\examples{
+x <- ForecastHorizon(rnorm(100), 'day',20)
+str(x)
+data(diario)
+y <- ConvertDataToTs(diario[,1:2], tsfrequency = "day", OutType = "xts")
+y <- ForecastHorizon(y, 'day', 20)
 }
 

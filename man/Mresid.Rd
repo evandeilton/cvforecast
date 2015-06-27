@@ -6,7 +6,16 @@
 \usage{
 Mresid(forecast)
 }
+\arguments{
+\item{forecast}{object of class forecast}
+}
 \description{
-Time series forecast residual analysis
+Compute six residual test on a forecast object an return its p.values. The null hypothesis that the residual don't have the tested characteristic. If p.value is > 5% we reject null.  See \code{\link{Box.test}}, \code{\link{t.test}}, \code{\link{LB.test}}, \code{\link{jarque.bera.test}}, \code{\link{bptest}}   and \code{\link{dwtest}} for more information about the tests
+}
+\examples{
+fcnm <- forecastMethod(lynx)
+fun <- get(fcnm[[1]])
+fit <- fun(AirPassengers, h=10, onlyfc = FALSE)
+Mresid(fit)
 }
 

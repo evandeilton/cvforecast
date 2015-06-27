@@ -2,11 +2,11 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{monthsAgg}
 \alias{monthsAgg}
-\title{TSAgg Extra function 4}
+\title{Months Extra function}
 \usage{
 monthsAgg(data, process, multiple = NULL, na.rm = FALSE)
 }
 \description{
-TSAgg Extra function 4
+Months Extra function
 }
 

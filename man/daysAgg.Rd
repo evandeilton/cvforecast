@@ -2,11 +2,11 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{daysAgg}
 \alias{daysAgg}
-\title{TSAgg Extra function 2}
+\title{Days Extra function}
 \usage{
 daysAgg(data, process, multiple = NULL, na.rm = FALSE)
 }
 \description{
-TSAgg Extra function 2
+Days Extra function
 }
 

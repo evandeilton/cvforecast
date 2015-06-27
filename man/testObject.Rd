@@ -6,6 +6,12 @@
 \usage{
 testObject(object)
 }
+\arguments{
+\item{object}{any object present into the environment}
+}
+\value{
+TRE or FALSE
+}
 \description{
 Test if an object exists
 }

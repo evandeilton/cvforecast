@@ -2,11 +2,11 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{zoo2TimeSeries}
 \alias{zoo2TimeSeries}
-\title{TSAgg Extra function 7}
+\title{Extra function}
 \usage{
 zoo2TimeSeries(x, ...)
 }
 \description{
-TSAgg Extra function 7
+Zoo to TimeSeries
 }
 

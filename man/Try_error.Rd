@@ -6,7 +6,12 @@
 \usage{
 Try_error(code, silent = TRUE)
 }
+\arguments{
+\item{code}{any stuff you want}
+
+\item{silent}{if TRUE doesn't print results}
+}
 \description{
-Error handler improved
+Improved verions of R error handler
 }
 

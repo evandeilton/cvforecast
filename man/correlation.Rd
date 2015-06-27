@@ -7,7 +7,29 @@
 correlation(tabela_y, tabela_x = NULL, method = "pearson", digits = 4,
   verbose = FALSE, corsimples = FALSE, ...)
 }
+\arguments{
+\item{tabela_y}{data.frame, vector or matrix for y variables}
+
+\item{tabela_x}{data.frame, vector or matrix for x variables}
+
+\item{method}{correlation method required. See \code{\link{cor}} for more.}
+
+\item{digits}{output length of numeric data}
+
+\item{verbose}{is TRUE shows information about the process}
+
+\item{corsimples}{if TRUE, returns simple correlation only}
+
+\item{...}{extra args, if needed.}
+}
+\value{
+Results as a data.frame with correlation, R^2, adjusted R^2 for a lm model and PRESS statistics.
+}
 \description{
-Correlations by pairs between two class of variables
+Performs correlations by pairs between two class of variables.
+}
+\examples{
+correlation(mtcars[,1:3])
+correlation(mtcars[,1:3], mtcars[,4:6])
 }
 

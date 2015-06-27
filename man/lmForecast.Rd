@@ -7,7 +7,31 @@
 lmForecast(x, h, level = 95, onlyfc = TRUE, xreg = NULL, newxreg = NULL,
   ...)
 }
+\arguments{
+\item{x}{'ts' data}
+
+\item{h}{forecast horizon}
+
+\item{level}{confidence level. Default is 95%}
+
+\item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
+
+\item{xreg}{in liner model with covariates it's must be provide}
+
+\item{newxreg}{in liner model with covariates it's must be provide for forecasting the covariates}
+
+\item{...}{extra args, if needed.}
+}
+\value{
+forecasts from ts data or an object of class 'forecast'
+}
 \description{
 Linear model forecast wrapper
+}
+\examples{
+fit <- lmForecast(AirPassengers, h=10, onlyfc = FALSE)
+plot(fit)
+Mresid(fit)
+tsSummary(fit)
 }
 

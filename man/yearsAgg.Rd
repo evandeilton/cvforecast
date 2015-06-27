@@ -2,12 +2,12 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{yearsAgg}
 \alias{yearsAgg}
-\title{TSAgg Extra function 5}
+\title{Years Extra function}
 \usage{
 yearsAgg(data, process, multiple = NULL, na.rm = FALSE,
   from.first.obs = TRUE)
 }
 \description{
-TSAgg Extra function 5
+Years Extra function
 }
 

@@ -2,7 +2,6 @@
 #'
 #' This function receives data and performes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
 #'
-#'
 #' @param tsdata data.frame type date-value, ts, mts or xts time series objects
 #' @param tsControl generic contol with several args for the modelling process. See
 #'    \code{\link{cvForecastControl}}.
@@ -56,14 +55,16 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 	cvMethod <- toupper(tsControl$cvMethod)
 	tsfrequency  <- tsControl$tsfrequency
 	OutlierClean <- tsControl$OutlierClean
+	dateformat <- tsControl$dateformat
 
 	if(class(tsdata)[1] %in% c("data.frame")) {
 		# To format the forecast output
 		flag_forecast_format <- TRUE
 		# Work with data and date formats
-		x <- ConvertDataToTs(Data=tsdata, tsfrequency=tsfrequency, OutType = "ts", OutlierClean=OutlierClean)
 
-		XTS <- ConvertDataToTs(Data=tsdata, tsfrequency=tsfrequency, OutlierClean=OutlierClean, OutType = "xts")
+		x <- ConvertData(tsdata, tsfrequency=tsfrequency, dateformat=dateformat, OutType = "ts", OutlierClean=OutlierClean)
+
+		XTS <- ConvertData(tsdata, tsfrequency=tsfrequency, dateformat=dateformat, OutType = "xts", OutlierClean=OutlierClean)
 		x <- x[,1]
 		# Dates in nice format for forecast output
 		FCH <- ForecastHorizon(XTS, tsfrequency=tsfrequency, horizon=h)
@@ -86,25 +87,77 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 		x <- ts(x, frequency=1)
 	}
 
-	FCmethod <- Try_error(forecastMethod(x))
+	## Empty objects
+	trend <- check_trend <- nlTests <- c()
 
-	if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1 | class(FCmethod)=="try-error") {
-		cat("Series with less than 2 cycles or non-periodic.\n")
+	if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1) {
+		cat("Series with less than 2 cycles or non-periodic. Try ARIMA and ETS!\n")
 
 		# Define salto igual a 1 e numero de observa?oes m?nimas igual a 5
 		tsControl$minObs <- 8
 		tsControl$stepSize <- 1
-		FCmethod <- list("auto.arimaForecast","etsForecast")
-	} 
-	
-	out <- plyr::llply(FCmethod, function(X, ...) {
+
+		nm_short <- list("auto.arimaForecast","etsForecast")
+
+		out <- plyr::llply(nm_short, function(X, ...) {
 				temp <- Try_error(cvts2(x=x, FUN=get(X), tsControl))
 				if (class(temp)[1]!="try-error") temp
 				else NA
 			}
 		)
-		names(out) <- FCmethod
-	
+		names(out) <- nm_short
+	} else {
+
+	## Testa se a fun??o ? linear por cinco testes. Se ela n?o passar em pelo menos 4 testes ent?o ? n?o linear
+	trend <- nparTrend(x)
+	check_trend <- unname(trend["trend_sign"] != 0)
+
+	nlTests <- list("terasvirta","white", "keenan", "tsay","tarTest")
+	linear  <- Try_error(na.omit(sapply(nlTests,  function(n) linearityTest(x, n)$p.value)))
+
+	if (class(linear)[1] == "numeric") {
+		linear <- ifelse(sum(linear > 0.01) < 5, TRUE, FALSE)
+	} else {
+		linear <- TRUE
+	}
+
+		if (linear & check_trend) {
+			## Modelos para s?ries COM tend?ncia de crescimento
+			nm_trend <- list("auto.arimaForecast","etsForecast","lmForecast","HWsForecast","snaiveForecast")
+
+			out <- plyr::llply(nm_trend, function(X, ...) {
+					temp <- cvts2(x=x, FUN=get(X), tsControl)
+					if (class(temp)[1]!="try-error") temp
+					else NA
+				}
+			)
+			names(out) <- nm_trend
+
+		} else if (linear & !check_trend) {
+			## Modelos para s?ries SEM tend?ncia de crescimento
+			nm_notrend <- list("meanForecast","naiveForecast","rwForecast","snaiveForecast","stsForecast","thetaForecast","HWnsForecast","HWesForecast")
+
+			out <- plyr::llply(nm_notrend, function(X, ...) {
+					temp <- Try_error(cvts2(x=x, FUN=get(X), tsControl))
+					if (class(temp)[1]!="try-error") return(temp)
+					else NA
+				}
+			)
+			names(out) <- nm_notrend
+		} else {
+			## Modelos para s?ries n?o lineares "nnetarForecast",
+			nm_nonlinear <- list("snaiveForecast","lmForecast")
+
+			out <- plyr::llply(nm_nonlinear, function(X, ...) {
+					temp <- Try_error(cvts2(x=x, FUN=get(X), tsControl))
+					if (class(temp)[1]!="try-error") return(temp)
+					else NA
+				}
+			)
+			names(out) <- nm_nonlinear
+		}
+	}
+
 	# Remove poss?veis valores missing
 	out <- out[!is.na(out)]
 
@@ -201,6 +254,8 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 	out1$cv_stat  <- estatisticas[, names(best_models), drop=FALSE]
 	out1$acuracia <- STATS
 	out1$myControl<- myControl
+	out1$tendencia<- check_trend
+	out1$linear   <- linear
 
 	class(out1) <- "cvforecast"
 	return(invisible(out1))

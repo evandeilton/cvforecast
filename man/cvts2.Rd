@@ -2,12 +2,46 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{cvts2}
 \alias{cvts2}
-\title{Function to cross-validate a time series.}
+\title{Function to cross-validate a time series}
 \usage{
 cvts2(x, FUN, tsControl = cvForecastControl(), progress = TRUE,
   packages = NULL, ...)
 }
+\arguments{
+\item{x}{time series object of class 'ts'}
+
+\item{FUN}{forecast wrapper function. These are some ones stsForecast, hwForecast, tbatsForecast, auto.arimaForecast, sesForecast, meanForecast, holtForecast, batsForecast, etsForecast, arimaForecast, lmForecast, thetaForecast, rwForecast, snaiveForecast, naiveForecast, nnetarForecast, HWsForecast, HWnsForecast and HWesForecast. This function works also in parallel very fast in multiple core computers.}
+
+\item{tsControl}{Generic control for cross-validation process. See \code{\link{cvForecastControl}}.}
+
+\item{progress}{if TRUE, show the progress bar.}
+
+\item{packages}{extra R packages required by R. Default is NULL}
+
+\item{...}{extra args, if needed}
+}
+\value{
+list with information about then cross-validation like forecasts and accuracy
+}
 \description{
-Function to cross-validate a time series.
+Main function to perform cross-validation. This function was firstly created by Zach Mayer (https://github.com/zachmayer/cv.ts) thanks, and adapted by LOPES. J. E. It
+}
+\examples{
+# Control
+myControl <- cvForecastControl(
+minObs = 14,
+stepSize = 10,
+maxHorizon = 30,
+fixedWindow=TRUE,
+preProcess=FALSE,
+ppMethod='guerrero',
+summaryFunc=tsSummary,
+cvMethod="MAPE",
+tsfrequency='month',
+OutlierClean=FALSE)
+#cl <- makeCluster(4, type='SOCK')
+#registerDoParallel(cl)
+fit <- cvts2(AirPassengers, auto.arimaForecast, myControl)
+#stopCluster(cl)
 }
 

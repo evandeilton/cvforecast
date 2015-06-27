@@ -2,11 +2,16 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{Start}
 \alias{Start}
-\title{Switcher funtion to choose frenquencies based on char dates}
+\title{Compute starting values for ts transformation}
 \usage{
 Start(freq, tdata)
 }
+\arguments{
+\item{freq}{data frequency for the dates. It works with  "year", "month", "day", "hour" and "min".}
+
+\item{tdata}{data came from \code{TimeSeries} function}
+}
 \description{
-Switcher funtion to choose frenquencies based on char dates
+This switcher is a internal function that chooses frequencies based on char dates. It's used to help transforming data into ts objects in R
 }
 
