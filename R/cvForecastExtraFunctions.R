@@ -368,13 +368,13 @@ forecastMethod <- function(x) {
   ## Decis?o
   if (short) {
     ## Modelos para S?ries curtas ou sem frequencia definida
-    metodo <- list("auto.arimaForecast","etsForecast","HWesForecast")
+    metodo <- list("auto.arimaForecast","etsForecast","HWsForecast")
   } else if(linear & !check_trend) {
     ## Modelos para S?ries lineares mas sem tend?ncia
     metodo <- list("naiveForecast","rwForecast","stsForecast","thetaForecast","HWnsForecast","HWesForecast")
   } else if(linear & check_trend) {
     ## Modelos para S?ries lineares e com tend?ncia
-    metodo <- list("auto.arimaForecast","etsForecast","HWsForecast","snaiveForecast")
+    metodo <- list("auto.arimaForecast","etsForecast","HWsForecast","snaiveForecast","HWsForecast")
   } else {
     ## Modelos para S?ries n?o lineares com ou sem tend?ncia
     metodo <- list("snaiveForecast","HWesForecast","lmForecast","HWsForecast")

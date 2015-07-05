@@ -8,4 +8,4 @@ To install code run
 ```{R}
 devtools::install_github('evandeilton/cvforecast')
 ```
-Note: There are lots of undocumented code. This is an very unsafe experiment I'm not a R programming guy!
+Note: There are lots of undocumented code. This is a very unsafe experiment I'm not a R programming guy!

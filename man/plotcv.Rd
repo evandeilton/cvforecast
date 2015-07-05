@@ -4,7 +4,7 @@
 \alias{plotcv}
 \title{Plot forecasts from cvforecast objetc}
 \usage{
-plotcv(obj, x_labgraf = "Di<e1>ria", v_titgraf = "Hist<f3>rico mais Proje<e7><e3>o",
+plotcv(obj, x_labgraf = "Diaria", v_titgraf = "Historico mais Projecao",
   ...)
 }
 \arguments{
