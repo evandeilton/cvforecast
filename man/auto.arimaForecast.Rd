@@ -12,7 +12,7 @@ auto.arimaForecast(x, h, level = 95, onlyfc = TRUE, xreg = NULL,
 
 \item{h}{forecast horizon}
 
-\item{level}{confidence level. Default is 95%}
+\item{level}{confidence level. Default is 0.95}
 
 \item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
 

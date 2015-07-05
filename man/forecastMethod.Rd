@@ -10,7 +10,7 @@ forecastMethod(x)
 \item{x}{ts object, univariate time series}
 }
 \description{
-Automatically estimates the most adequate forecasts method for a 'ts' object based on linearity and trend tests and return a list containing all functions names. See \code{\link{nparTrend}} and \code{\link{nlTests}} for more.
+Automatically estimates the most adequate forecasts method for a 'ts' object based on linearity and trend tests and return a list containing all functions names. See \code{\link{nparTrend}} and \code{\link{linearityTest}} for more.
 }
 \examples{
 forecastMethod(lynx)

@@ -23,7 +23,7 @@ Suport several data types included xts, zoo, ts or numeric. If numeric data are 
 x <- ForecastHorizon(rnorm(100), 'day',20)
 str(x)
 data(diario)
-y <- ConvertDataToTs(diario[,1:2], tsfrequency = "day", OutType = "xts")
+y <- ConvertData(diario[,1:2], tsfrequency = "day", OutType = "xts")
 y <- ForecastHorizon(y, 'day', 20)
 }
 

@@ -11,7 +11,9 @@ stl.Forecast(x, h, level = 95, method = "ets", onlyfc = TRUE, ...)
 
 \item{h}{forecast horizon}
 
-\item{level}{confidence level. Default is 95%}
+\item{level}{confidence level. Default is 0.95}
+
+\item{method}{Method to use for forecasting the seasonally adjusted series.}
 
 \item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
 

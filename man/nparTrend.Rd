@@ -8,6 +8,8 @@ nparTrend(x, ...)
 }
 \arguments{
 \item{x}{'ts' data}
+
+\item{...}{extra args, if needed.}
 }
 \value{
 trend analysis statistics. See \code{\link{rkt}} for more information about tests

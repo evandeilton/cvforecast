@@ -33,7 +33,8 @@ myControl <- cvForecastControl(
  summaryFunc=tsSummary,
  cvMethod="MAPE",
  tsfrequency='day',
- OutlierClean=FALSE)
+ OutlierClean=FALSE,
+ dateformat='\%d/\%m/\%Y \%H:\%M:\%S')
 
 #Paralell execution improves the processing time
 
@@ -43,7 +44,7 @@ myControl <- cvForecastControl(
 #Load data
 
 data(diario, package="cvforecast")
-dadosd <- ConvertDataToTs(diario, tsfrequency = "day", OutType="ts")
+dadosd <- ConvertData(diario, dateformat='\%d/\%m/\%Y \%H:\%M:\%S', tsfrequency = "day", OutType="ts")
 table(sapply(dadosd, class))
 dim(dadosd)
 

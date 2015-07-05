@@ -4,25 +4,31 @@
 \alias{ConvertData}
 \title{Generic function to convert time series data}
 \usage{
-ConvertData(Data, tsfrequency = "day",
-  dateformat = "\%d/\%m/\%Y \%H:\%M:\%S", OutType = "ts",
-  OutlierClean = TRUE, tz = Sys.getenv("TZ"), ...)
+ConvertData(Data, tsfrequency = "month", OutType = "ts",
+  OutlierClean = TRUE, ...)
+
+ConvertData(Data, tsfrequency = "month", OutType = "ts",
+  OutlierClean = TRUE, ...)
 }
 \arguments{
 \item{Data}{input data set}
 
 \item{tsfrequency}{data frequency. It can be "year", "month", "day", "hour", "min" or "sec"}
 
-\item{dateformat}{format for dates in case of data.frame data. See \code{\link{strptime}} for more information and examples}
-
 \item{OutlierClean}{if TRUE compute outliers clean. See \code{\link{tsclean}}}
 
-\item{tz}{timezone. Default is the system tz}
+\item{...}{extra args}
+
+\item{dateformat}{format for dates in case of data.frame data. See \code{\link{strptime}} for more information and examples}
 
 \item{outType}{output format os converted data. It can be "ts" "xts" or "df" data.frame}
+
+\item{tz}{timezone. Default is the system tz}
 }
 \description{
 Suport several data types included, data.frame(date, value), xts, zoo, ts or numeric. If numeric data are input, R try to build a date pattern for output in case of  \code{outType} is defined as "xts" or "df", otherwise it returns a ts object.
+
+Conver data to ts or xts
 }
 \examples{
 data(mensal)

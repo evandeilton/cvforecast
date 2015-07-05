@@ -1,14 +1,14 @@
 Package: cvforecast
 Type: Package
-Title: Multiforecast based on CrossValidation
-Version: 0.99
-Date: 2015-06-27
+Title: Multiple forecasts based on CrossValidation
+Version: 1.01
+Date: 2015-06-29
 Author: Jose E Lopes
 Maintainer: <evandeilton@gmail.com>
-Description: Through several kind of forecasting methods makes Cross-Validation and choose best models automatically.
+Description: Through several kind of forecasting methods makes CrossValidation and choose best models automatically.
 License: MIT
 LazyData: TRUE
-Depends: forecast, lmtest, mondate, plyr, TSA, rkt, tseries, xts, zoo,
-        RColorBrewer, doParallel, lubridate
+Depends: forecast, foreach, lmtest, plyr, TSA, rkt, tseries, xts, zoo,
+        lubridate, boot
 NeedsCompilation: no
-Packaged: 2015-06-26 21:16:18 UTC; G0047743
+Packaged: 2015-07-03 20:15:08 UTC; G0047743

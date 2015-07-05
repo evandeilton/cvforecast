@@ -2,6 +2,7 @@
 #'
 #' This function receives data and performes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
 #'
+#'
 #' @param tsdata data.frame type date-value, ts, mts or xts time series objects
 #' @param tsControl generic contol with several args for the modelling process. See
 #'    \code{\link{cvForecastControl}}.
@@ -20,7 +21,8 @@
 #'  summaryFunc=tsSummary,
 #'  cvMethod="MAPE",
 #'  tsfrequency='day',
-#'  OutlierClean=FALSE)
+#'  OutlierClean=FALSE,
+#'  dateformat='%d/%m/%Y %H:%M:%S')
 #'
 #'#Paralell execution improves the processing time
 #'
@@ -30,7 +32,7 @@
 #'#Load data
 #'
 #'data(diario, package="cvforecast")
-#'dadosd <- ConvertDataToTs(diario, tsfrequency = "day", OutType="ts")
+#'dadosd <- ConvertData(diario, dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day", OutType="ts")
 #'table(sapply(dadosd, class))
 #'dim(dadosd)
 #'
@@ -87,84 +89,26 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 		x <- ts(x, frequency=1)
 	}
 
-	## Empty objects
-	trend <- check_trend <- nlTests <- c()
+	nmforecast <- Try_error(forecastMethod(x))
 
-	if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1) {
+	if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1 | class(nmforecast) == "try-error") {
 		cat("Series with less than 2 cycles or non-periodic. Try ARIMA and ETS!\n")
-
-		# Define salto igual a 1 e numero de observa?oes m?nimas igual a 5
 		tsControl$minObs <- 8
 		tsControl$stepSize <- 1
+		nmforecast <- list("auto.arimaForecast","etsForecast")
+	}
 
-		nm_short <- list("auto.arimaForecast","etsForecast")
-
-		out <- plyr::llply(nm_short, function(X, ...) {
-				temp <- Try_error(cvts2(x=x, FUN=get(X), tsControl))
-				if (class(temp)[1]!="try-error") temp
-				else NA
+	out <- plyr::llply(nmforecast, function(X, ...) {
+		temp <- Try_error(cvts2(x=x, FUN=get(X), tsControl))
+			if (class(temp)[1]!="try-error") return(temp)
+			else NA
 			}
 		)
-		names(out) <- nm_short
-	} else {
+	names(out) <- nmforecast
 
-	## Testa se a fun??o ? linear por cinco testes. Se ela n?o passar em pelo menos 4 testes ent?o ? n?o linear
-	trend <- nparTrend(x)
-	check_trend <- unname(trend["trend_sign"] != 0)
-
-	nlTests <- list("terasvirta","white", "keenan", "tsay","tarTest")
-	linear  <- Try_error(na.omit(sapply(nlTests,  function(n) linearityTest(x, n)$p.value)))
-
-	if (class(linear)[1] == "numeric") {
-		linear <- ifelse(sum(linear > 0.01) < 5, TRUE, FALSE)
-	} else {
-		linear <- TRUE
-	}
-
-		if (linear & check_trend) {
-			## Modelos para s?ries COM tend?ncia de crescimento
-			nm_trend <- list("auto.arimaForecast","etsForecast","lmForecast","HWsForecast","snaiveForecast")
-
-			out <- plyr::llply(nm_trend, function(X, ...) {
-					temp <- cvts2(x=x, FUN=get(X), tsControl)
-					if (class(temp)[1]!="try-error") temp
-					else NA
-				}
-			)
-			names(out) <- nm_trend
-
-		} else if (linear & !check_trend) {
-			## Modelos para s?ries SEM tend?ncia de crescimento
-			nm_notrend <- list("meanForecast","naiveForecast","rwForecast","snaiveForecast","stsForecast","thetaForecast","HWnsForecast","HWesForecast")
-
-			out <- plyr::llply(nm_notrend, function(X, ...) {
-					temp <- Try_error(cvts2(x=x, FUN=get(X), tsControl))
-					if (class(temp)[1]!="try-error") return(temp)
-					else NA
-				}
-			)
-			names(out) <- nm_notrend
-		} else {
-			## Modelos para s?ries n?o lineares "nnetarForecast",
-			nm_nonlinear <- list("snaiveForecast","lmForecast")
-
-			out <- plyr::llply(nm_nonlinear, function(X, ...) {
-					temp <- Try_error(cvts2(x=x, FUN=get(X), tsControl))
-					if (class(temp)[1]!="try-error") return(temp)
-					else NA
-				}
-			)
-			names(out) <- nm_nonlinear
-		}
-	}
-
-	# Remove poss?veis valores missing
+	# Remove missing values
 	out <- out[!is.na(out)]
-
-	# Remove poss?veis valores missings
 	out <- Filter(Negate(function(X) is.null(unlist(X))), out)
-
-	## Functions left out "batsForecast", "tbatsForecast","caretForecast", "stl.Forecast"
 
 	## monta tabela com as estat
 	STATS <- lapply(out,
@@ -197,12 +141,10 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 	## A decis?o n?o ? baseada apenas no menor valor, mas sim naqueque que aprenseta melhor comportamento ao longo do CrossVall. Ex: menor coeficiente de varia??o m?dio e coeficiante de varia??o mediano.
 	CV <- sapply(estatisticas, function(X) {
 			cv = sd(X, na.rm=TRUE)/mean(X, na.rm=TRUE)
-
 			#DAMM = Desvio Absoluto Mediano da Mediana
 			#damm = median(abs(X-median(X, na.rm=TRUE)), na.rm=TRUE)
 			#cvmed = damm/median(X, na.rm=TRUE)
 			##mpcv <- (cv+cvmed-cv*cvmed) ## Uniao dos valores AUB = A+B-AC
-
 			return(abs(median(X, na.rm=TRUE)) + cv)
 		}
 	)
@@ -211,17 +153,28 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 	CV <- sort(CV[!CV %in% c(Inf, -Inf, 0, NA)])
 	CV_names <- as.list(names(CV))
 
-	## Seleciona apenas os cinco melhores
-	if (length(CV_names) > 5) CV_names <- CV_names[1:6]
-
 	best_models <- plyr::llply(CV_names, function(J) {
 			temp <- try(switch.cvforecast(x=x, nmodelo=J, h=h, onlyfc=FALSE))
 			if(class(temp)!="try-error") temp else NA
 		}
 	)
+
 	names(best_models) <- CV_names
 
+	best_models <- best_models[!is.na(best_models)]
 
+	Bm <- cvBestModel(best_models, cvMethod=cvMethod,residlevel = 0.10)
+	CV_names <- as.list(Bm[,1])
+
+	## Seleciona apenas os cinco melhores
+	if (length(CV_names) > 5) CV_names <- CV_names[1:6]
+
+	## Reorder model list according with best models
+	temp <- c()
+	for(i in CV_names) {
+		temp[[i]] <- best_models[[i]]
+	}
+	best_models <- temp
 	## Work with best format forecast output. This works only if input dates are in char format.
 
 	if(flag_forecast_format) {
@@ -237,6 +190,24 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 			stop("No best models found!\n")
 		}
 		bestForecast <- data.frame(date = ForecastDates,values)
+
+		dfx <- tsdata
+		#dfx$dates <- strptime(dfx$dates, '%d/%m/%Y %H:%M:%S', tz = Sys.getenv("TZ"))
+		dfx$li <- dfx$ls <- dfx$forecast <- as.numeric(NA)
+		names(dfx) <- c("data", "realizado","li","forecast","ls")
+
+		dfy <- bestForecast
+		dfy$date <- strftime(dfy$date, '%d/%m/%Y %H:%M:%S', tz = Sys.getenv("TZ"))
+		dfy$realizado <- as.numeric(NA)
+
+		dfy <- data.frame(data=dfy$date, realizado = dfy$realizado, li=dfy$lo.95, forecast=dfy$point.forecast, ls=dfy$hi.95)
+
+		Tt <- rbind(dfx, dfy)
+		Tt <- ConvertData(Tt, dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day", OutType="xts", OutlierClean = FALSE)
+
+		D <- data.frame(data = index(Tt), Tt)
+		row.names(D) <- NULL
+		bestForecast <- list(bestForecast, D)
 	} else {
 		if(!is.na(best_models[[1]][1])) {
 			bestForecast <- best_models[[1]]
@@ -254,9 +225,8 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 	out1$cv_stat  <- estatisticas[, names(best_models), drop=FALSE]
 	out1$acuracia <- STATS
 	out1$myControl<- myControl
-	out1$tendencia<- check_trend
-	out1$linear   <- linear
 
 	class(out1) <- "cvforecast"
 	return(invisible(out1))
 }
+

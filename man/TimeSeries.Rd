@@ -9,7 +9,7 @@ TimeSeries(dates, dateformat, data = NULL, tz = "GMT")
 \arguments{
 \item{dates}{char vector of dates same length of data}
 
-\item{dateformat}{date format, eg. "%d/%m/%Y %H:%M:%S". See \code{\link{strptime}} for more information and examples}
+\item{dateformat}{date format. See \code{\link{strptime}} for more information and examples}
 
 \item{data}{data numeric vector, matrix or data.frame containing time series data}
 

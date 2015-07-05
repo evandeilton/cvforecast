@@ -11,9 +11,11 @@ nnetarForecast(x, h, level = 95, onlyfc = TRUE, nn_p = 1, ...)
 
 \item{h}{forecast horizon}
 
-\item{level}{confidence level. Default is 95%}
+\item{level}{confidence level. Default is 0.95}
 
 \item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
+
+\item{nn_p}{Embedding dimension for non-seasonal time series. Number of non-seasonal lags used as inputs. For non-seasonal time series, the default is the optimal number of lags (according to the AIC) for a linear AR(p) model. For seasonal time series, the same method is used but applied to seasonally adjusted data (from an stl decomposition) - From Rob J Hyndman.}
 
 \item{...}{extra args, if needed.}
 }

@@ -2,21 +2,19 @@
 % Please edit documentation in R/cvForecastExtraFunctions.R
 \name{lm_press_stat}
 \alias{lm_press_stat}
-\title{Compute R^2 and PRESS statistic form lm}
+\title{PRESS and other statistics from lm model}
 \usage{
 lm_press_stat(obj)
 }
 \arguments{
-\item{obj}{object from \code{\link{lm}} class}
-}
-\value{
-data.frama with test statistics
+\item{obj}{A linear regression model (class 'lm'). Required.}
 }
 \description{
-Compute R^2 and PRESS statistic form lm
+Returns the PRESS statistic (predictive residual sum of squares).
+Useful for evaluating predictive power of regression models.
 }
 \examples{
-fit <- step(lm(mpg~., data=mtcars), trace = 0)
+fit <- step(lm(mpg~., data = mtcars), trace = 0)
 lm_press_stat(fit)
 }
 

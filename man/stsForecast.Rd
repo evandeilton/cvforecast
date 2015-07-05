@@ -11,7 +11,7 @@ stsForecast(x, h, level = 95, onlyfc = TRUE, ...)
 
 \item{h}{forecast horizon}
 
-\item{level}{confidence level. Default is 95%}
+\item{level}{confidence level. Default is 0.95}
 
 \item{onlyfc}{if TRUE return only forecasts, otherwise returns a full forecast classed object}
 
@@ -24,7 +24,7 @@ forecasts from ts data or an object of class 'forecast'
 Structural time series forecast wrapper
 }
 \examples{
-fit <- StructTS(AirPassengers, h=10, onlyfc = FALSE)
+fit <- stsForecast(AirPassengers, h=10, onlyfc = FALSE)
 plot(fit)
 Mresid(fit)
 tsSummary(fit)

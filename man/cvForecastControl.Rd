@@ -4,10 +4,10 @@
 \alias{cvForecastControl}
 \title{Default Cross-validation control}
 \usage{
-cvForecastControl(stepSize = 1, maxHorizon = 1, minObs = 2 *
-  max(cycle(x)), fixedWindow = TRUE, summaryFunc = tsSummary,
-  preProcess = FALSE, ppMethod = "guerrero", cvMethod = "MAPE",
-  tsfrequency = "month", OutlierClean = TRUE,
+cvForecastControl(stepSize = 1, maxHorizon = 1, minObs = 7,
+  fixedWindow = TRUE, summaryFunc = tsSummary, preProcess = FALSE,
+  ppMethod = "guerrero", cvMethod = "MAPE", tsfrequency = "month",
+  OutlierClean = TRUE, residlevel = 0.1,
   dateformat = "\%d/\%m/\%Y \%H:\%M:\%S")
 }
 \arguments{
@@ -25,9 +25,13 @@ cvForecastControl(stepSize = 1, maxHorizon = 1, minObs = 2 *
 
 \item{ppMethod}{if 'preProcess' is TRUE make 'guerrero' or 'loglik' tranformation. See \code{\link{BoxCox.lambda}}}
 
+\item{cvMethod}{accuracy method for best model choice. See \code{\link{accuracy}}}
+
 \item{tsfrequency}{time series data frequency}
 
 \item{OutlierClean}{if TRUE, remove outliers from the data. See \code{\link{tsclean}}}
+
+\item{residlevel}{confidence level for residual tests}
 
 \item{dateformat}{date format for charater dates}
 }
@@ -43,9 +47,6 @@ myControl <- cvForecastControl(
 minObs = 14,
 stepSize = 5,
 maxHorizon = 30,
-fixedWindow=TRUE,
-preProcess=FALSE,
-ppMethod='guerrero',
 summaryFunc=tsSummary,
 cvMethod="MAPE",
 tsfrequency='day',

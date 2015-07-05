@@ -32,16 +32,13 @@ myControl <- cvForecastControl(
 minObs = 14,
 stepSize = 10,
 maxHorizon = 30,
-fixedWindow=TRUE,
-preProcess=FALSE,
-ppMethod='guerrero',
 summaryFunc=tsSummary,
 cvMethod="MAPE",
-tsfrequency='month',
 OutlierClean=FALSE)
 #cl <- makeCluster(4, type='SOCK')
 #registerDoParallel(cl)
-fit <- cvts2(AirPassengers, auto.arimaForecast, myControl)
+x <- AirPassengers
+fit <- cvts2(x, auto.arimaForecast)
 #stopCluster(cl)
 }
 
