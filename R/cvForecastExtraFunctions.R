@@ -211,7 +211,7 @@ cvts2 <- function(x, FUN, tsControl=cvForecastControl(), progress=TRUE, packages
 }
 
 #' Box and Cox tests and Ljung
-#' 
+#'
 #' Performs Ljung and Box test and also Durbin-Watson both for autocorrelation on the residuals from the model. It returns also accuracy statistics. See \code{\link{accuracy}}, \code{\link{Box.test}}, \code{\link{dwtest}}.
 #' @param model A forecast model. See \code{\link{cvts2}}.
 #' @param ... extra args, if needed.
@@ -237,7 +237,7 @@ LjungBtest_Acuracia <- function(model,...) {
 }
 
 #' Correlations by pairs between two class of variables
-#' 
+#'
 #' Performs correlations by pairs between two class of variables.
 #' @param tabela_y data.frame, vector or matrix for y variables
 #' @param tabela_x data.frame, vector or matrix for x variables
@@ -290,9 +290,9 @@ correlation <- function(tabela_y, tabela_x=NULL, method = "pearson", digits = 4,
 }
 
 #' Auto-find time series number of differences
-#' 
+#'
 #' Try to find number of differentiations before a time series become stationary. See \code{\link{ndiffs}} for more details about techniques of decision.
-#' 
+#'
 #' @param x ts data object
 #' @param alpha confidence level for internal tests
 #' @param plot if TRUE plot results
@@ -383,7 +383,7 @@ forecastMethod <- function(x) {
 }
 
 #' Time series forecast residual analysis
-#' 
+#'
 #' Compute six residual test on a forecast object an return its p.values. The null hypothesis that the residual don't have the tested characteristic. If p.value is > 5% we reject null.  See \code{\link{Box.test}}, \code{\link{t.test}}, \code{\link{LB.test}}, \code{\link{jarque.bera.test}}, \code{\link{bptest}}   and \code{\link{dwtest}} for more information about the tests
 #' @param forecast object of class forecast
 #' @examples
@@ -401,7 +401,7 @@ Mresid <- function(forecast) {
 	x <- x[-seq(l)]
 
 	# testes para independencia dos residuos
-	independencia <- Try_error(Box.test(r, lag=10, type = "Ljung-Box")$p.value)	
+	independencia <- Try_error(Box.test(r, lag=10, type = "Ljung-Box")$p.value)
 	# Teste para ver se a media tende a zero
 	media_zero <- Try_error(t.test(r, alternative='two.sided', mu=0.0, conf.level=.95)$p.value)
 	# Teste para ver se os residuos sao ruido branco
@@ -436,8 +436,8 @@ testObject <- function(object){
 }
 
 #' Default summary function
-#' 
-#' Return accuracy statistics for the forecast model. See \code{\link{accuracy}} 
+#'
+#' Return accuracy statistics for the forecast model. See \code{\link{accuracy}}
 #' @param P forecast object
 #' @param A data vector of sample for testing. Must have same length as P
 #' @return accuracy data.frame
@@ -455,9 +455,9 @@ tsSummary <- function(P, A) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
-#' 
+#'
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
 #' fit <- meanForecast(AirPassengers, h=10, onlyfc = FALSE)
@@ -475,7 +475,7 @@ meanForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -494,7 +494,7 @@ naiveForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -513,7 +513,7 @@ snaiveForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -532,7 +532,7 @@ rwForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -551,7 +551,7 @@ thetaForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param xreg in liner model with covariates it's must be provide
 #' @param newxreg in liner model with covariates it's must be provide for forecasting the covariates
 #' @param ... extra args, if needed.
@@ -597,7 +597,7 @@ lmForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -618,7 +618,7 @@ stsForecast <- function(x,h,level=95,  onlyfc=TRUE, ...) {
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
 #' @param method Method to use for forecasting the seasonally adjusted series.
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -637,7 +637,7 @@ stl.Forecast <- function(x, h, level=95, method='ets',  onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param xreg in ARIMA model with covariates it's must be provide
 #' @param newxreg in ARIMA model with covariates it's must be provide for forecasting the covariates
 #' @param ... extra args, if needed.
@@ -659,7 +659,7 @@ arimaForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...)
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param xreg in ARIMA model with covariates it's must be provide
 #' @param newxreg in ARIMA model with covariates it's must be provide for forecasting the covariates
 #' @param ... extra args, if needed.
@@ -681,7 +681,7 @@ auto.arimaForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -701,7 +701,7 @@ etsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -721,7 +721,7 @@ batsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -741,7 +741,7 @@ tbatsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param nn_p Embedding dimension for non-seasonal time series. Number of non-seasonal lags used as inputs. For non-seasonal time series, the default is the optimal number of lags (according to the AIC) for a linear AR(p) model. For seasonal time series, the same method is used but applied to seasonally adjusted data (from an stl decomposition) - From Rob J Hyndman.
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
@@ -762,7 +762,7 @@ nnetarForecast <- function(x, h, level=95,  onlyfc=TRUE, nn_p=1, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -782,7 +782,7 @@ sesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -802,7 +802,7 @@ holtForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -828,7 +828,7 @@ hwForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -849,7 +849,7 @@ meanForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -869,7 +869,7 @@ HWsForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -889,7 +889,7 @@ HWnsForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @param x 'ts' data
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -906,13 +906,13 @@ HWesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 }
 
 #' Switcher of time series forecast methods
-#' 
-#' Auxiliary switcher that helps the forecasting process. If you pass it a forecast wrapper it returns the forecast model. 
+#'
+#' Auxiliary switcher that helps the forecasting process. If you pass it a forecast wrapper it returns the forecast model.
 #' @param x 'ts' data
 #' @param nmodelo string with forecast wraper, eg. etsForecast
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object 
+#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
@@ -947,39 +947,46 @@ switch.cvforecast <- function(x, nmodelo, h, level=95, onlyfc=FALSE) {
 }
 
 #' Box and Cox tests and Ljung
-#' 
+#'
 #' Use Mann-Kendall test (MK) and the Seasonal and the Regional Kendall Tests for trend (SKT and RKT) and Theil-Sen's slope estimator for checking trend
 #' @param x 'ts' data
+#' @param npoints data points to test. Default twelve points.
 #' @param ... extra args, if needed.
 #' @return trend analysis statistics. See \code{\link{rkt}} for more information about tests
 #' @examples
 #' nparTrend(AirPassengers)
 #' @export
-nparTrend <- function(x, ...) {
+nparTrend <- function (x, npoints = 12, ...) {
+  #cat("Check trend in the last", npoints, "data points!\n")
+  if(length(x) > 12 & npoints < length(x)) x <- x[(length(x)-(npoints-1)):length(x)]
 
-	#mm <- MannKendall(da);mm
-	rk <- rkt::rkt(time(x), x)
-
-	# Slope diferente de zero, testar os valroes de \tau
-	if (round(rk$B, 6) != 0) {
-		if (rk$tau > 0.10) {
-			if (rk$tau <= 0.95) sinal <- 1L
-			else sinal <- 2L
-		} else if (rk$tau < -0.10){
-			if (rk$tau > -0.95) sinal <- -1L
-			else sinal <- -2L
-		} else {
-			sinal <- 0L
-		}
-	} else {
-		sinal <- 0L
-	}
-	out <- c(slope = rk$B, tau = rk$tau, score = rk$S, p.value = rk$sl, trend_sign=sinal)
-	round(out, 4)
+  rk <- rkt::rkt(time(x), x)
+  if (round(rk$B, 6) != 0) {
+    if (rk$tau > 0.1) {
+      if (rk$tau <= 0.95)
+        sinal <- 1L
+      else sinal <- 2L
+    }
+    else if (rk$tau < -0.1) {
+      if (rk$tau > -0.95)
+        sinal <- -1L
+      else sinal <- -2L
+    }
+    else {
+      sinal <- 0L
+    }
+  }
+  else {
+    sinal <- 0L
+  }
+  out <- c(slope = rk$B, tau = rk$tau, score = rk$S, p.value = rk$sl,
+           trend_sign = sinal)
+  round(out, 4)
 }
 
+
 #' Error handler improved
-#' 
+#'
 #' Improved verions of R error handler
 #' @param code any stuff you want
 #' @param silent if TRUE doesn't print results
@@ -998,7 +1005,7 @@ Try_error <- function(code, silent = TRUE) {
 }
 
 #' Linearity tests
-#' 
+#'
 #' Compute six linearity tests among Terasvirta, White, Keenan, McleodLi, Tsay and Tar.
 #' @seealso See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{McLeod.Li.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
 #' @param x 'ts' data
@@ -1046,7 +1053,7 @@ linearityTest <- function(x, Test) {
 }
 
 #' Generic function to convert time series data
-#' 
+#'
 #' Suport several data types included, data.frame(date, value), xts, zoo, ts or numeric. If numeric data are input, R try to build a date pattern for output in case of  \code{outType} is defined as "xts" or "df", otherwise it returns a ts object.
 #' @param Data input data set
 #' @param tsfrequency data frequency. It can be "year", "month", "day", "hour", "min" or "sec"
@@ -1070,9 +1077,9 @@ ConvertData <- function(Data, tsfrequency = "day", dateformat='%d/%m/%Y %H:%M:%S
 	if(is.null(dateformat) && any(class(Data)=="data.frame")) stop("data.frame needs first column as date format. ex: '%Y/%m/%d', '%Y-%m-%d', '%Y/%m/%d %H:%M:%S', '%Y-%m-%d %H:%M:%S', etc.!\n")
 	#check data frequancies
 	tsfrequency <- match.arg(tsfrequency, c("year","month","day","hour","min","sec"))
-	
+
 	OutType <- match.arg(OutType, c("ts","xts","df"))
-	
+
 	# check ts frequency
 	if (tsfrequency %in% c("year","month")){
 	freq <- 12
@@ -1101,7 +1108,7 @@ ConvertData <- function(Data, tsfrequency = "day", dateformat='%d/%m/%Y %H:%M:%S
 			#out <- TimeSeries(date, fmt, value)
 		} else {
 			date <- time(Data)+0.01
-			value <- as.data.frame(zoo::coredata(Data))	
+			value <- as.data.frame(zoo::coredata(Data))
 			if (length(dim(Data)) < 2) names(value) <- deparse(substitute(Data))
 			#out <- TimeSeries(date, fmt, value)
 		}
@@ -1120,18 +1127,18 @@ ConvertData <- function(Data, tsfrequency = "day", dateformat='%d/%m/%Y %H:%M:%S
 	} else {
 		stop("Check your dataset, dates and/or class!\n")
 	}
-	
+
 	if (OutlierClean) {
 		value <- sapply(value, function(X) {
 			tmp <- Try_error(tsclean(X))
 			if(class(tmp) !="try-error") tmp else X
 		})
-	
+
 		value <- as.data.frame(value)
 	}
-	
+
 	out <- TimeSeries(date, fmt, value)
-	
+
 	if(OutType=='ts') {
 		O <- ts(value, start = Start(tsfrequency, out), frequency=freq)
 	} else if (OutType == "xts"){
@@ -1143,7 +1150,7 @@ ConvertData <- function(Data, tsfrequency = "day", dateformat='%d/%m/%Y %H:%M:%S
 }
 
 #' Generate forecast horizon time sequence
-#' 
+#'
 #' Suport several data types included xts, zoo, ts or numeric. If numeric data are input, R try to build a date pattern based on sysdate().
 #' @param XtsData input data set
 #' @param tsfrequency data frequency. It can be "year", "month", "day", "hour", "min" or "sec"
@@ -1195,10 +1202,10 @@ ForecastHorizon <- function(XtsData, tsfrequency, horizon) {
 }
 
 #' Compute starting values for ts transformation
-#' 
+#'
 #' This switcher is a internal function that chooses frequencies based on char dates. It's used to help transforming data into ts objects in R
 #' @param freq data frequency for the dates. It works with  "year", "month", "day", "hour" and "min".
-#' @param tdata data came from \code{TimeSeries} function 
+#' @param tdata data came from \code{TimeSeries} function
 #' @export
 Start <- function(freq, tdata) {
   if (!freq %in% c("year","month","day","hour","min")) {
@@ -1215,7 +1222,7 @@ Start <- function(freq, tdata) {
 }
 
 #' @title PRESS and other statistics from lm model
-#' 
+#'
 #' @description Returns the PRESS statistic (predictive residual sum of squares).
 #' Useful for evaluating predictive power of regression models.
 #' @param obj A linear regression model (class 'lm'). Required.
@@ -1254,7 +1261,7 @@ lm_press_stat <- function(obj) {
 
 
 #' Convert char dates in Dates keeping data
-#' 
+#'
 #' Convert a data.frame with dates and numeric values into a new one including year, month, day, minute and second generated trough the \code{dateformat} applied to the original dates.
 #' @param dates char vector of dates same length of data
 #' @param dateformat date format. See \code{\link{strptime}} for more information and examples
@@ -1445,7 +1452,7 @@ yearsAgg<-function(data,
 		}
 
 #' Extra function
-#' 
+#'
 #' TimeSeries to zoo
 #' @export
 TimeSeries2zoo <- function(x, ...) {
@@ -1453,8 +1460,8 @@ TimeSeries2zoo <- function(x, ...) {
 }
 
 #' Extra function
-#' 
-#' Zoo to TimeSeries 
+#'
+#' Zoo to TimeSeries
 #' @export
 zoo2TimeSeries <- function(x, ...) {
 	stopifnot(inherits(time(x), "Date") || inherits(time(x), "POSIXt"))
@@ -1467,7 +1474,7 @@ zoo2TimeSeries <- function(x, ...) {
 }
 
 #' Best forecast among several ones
-#' 
+#'
 #' This function receives a list of forecast models from the class 'cvforecst' and returns a list of their characteristics.
 #' @param objcvfore 'cvforecst' object
 #' @param cvMethod gof statistic, MAPE, MASE, MAE, etc. \code{\link{accuracy}}
@@ -1502,18 +1509,18 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
 	  sm
     } else NULL # Trata casos de erros com -9
 	}))
-	
+
 	if (class(Resid) != "try-error") {
 		# Remove entradas missing (se houver)
 		Resid <- Filter(Negate(function(X) is.null(unlist(X))), Resid)
 		names(Resid) <- c(".id","RESID.PVALUE")
-	  
+
 		# Cria rank de resíduo
 		Resid$RES.RANK <- rank(Resid$RESID.PVALUE, na.last = TRUE, ties.method = "first")
 		Resid <- Resid[,-2]
 	} else {
 		Resid <- data.frame(.id = NA, RES.RANK = NA)
-	}	
+	}
 	## Estatisticas de bondade
 	STATS <- Try_error(plyr::ldply(objcvfore, function(X) {
 		if (class(X)[1] != "try-error") {
@@ -1529,21 +1536,21 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
 	} else {
 		STATS <- data.frame(.id=NA, ME=NA, RMSE=NA, MAE=NA, MPE=NA, MAPE=NA, MASE=NA, ACF1=NA, RESID.GOF=NA)
 	}
-  
-	if (!all(is.na(STATS)) & !all(is.na(Resid))) {  
+
+	if (!all(is.na(STATS)) & !all(is.na(Resid))) {
 		ESTFINAL <- merge(STATS, Resid, by.x = ".id")
-		ESTFINAL$SOMA.RK <- rowSums(ESTFINAL[,c("RESID.GOF", "RES.RANK")], na.rm = FALSE)	
-		ESTFINAL <- ESTFINAL[order(ESTFINAL$RESID.GOF),]	
+		ESTFINAL$SOMA.RK <- rowSums(ESTFINAL[,c("RESID.GOF", "RES.RANK")], na.rm = FALSE)
+		ESTFINAL <- ESTFINAL[order(ESTFINAL$RESID.GOF),]
 		CV_names <- ESTFINAL[,".id"]
 	} else {
 		# Without residual tests
-		ESTFINAL <- STATS[order(STATS$RESID.GOF),]	
+		ESTFINAL <- STATS[order(STATS$RESID.GOF),]
 	}
 	return(ESTFINAL)
 }
 
 #' Descriptive statistics
-#' 
+#'
 #' Receives a data.frame, vector or matrix and computes descriptive statistics.
 #' @param dados data.frame, matrix or numeric vector
 #' @param nivel significance level for bootstrap non-paramentric ci for the mean
@@ -1557,11 +1564,11 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
 #' Desc(rnorm(100, 2, 3))
 #' @export
 Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
- 
+
  tipoci <- match.arg(tipoci, c("norm","basic", "stud", "perc", "bca"))
  nivel <- nivel
- 
-  aux <- function(x,...){  
+
+  aux <- function(x,...){
     x <- na.omit(x)
     minimo  <- media <- mediana <- maximo <- desviop <- meddesv <- na <- null <- B <- cv <- as.numeric(NA)
     minimo  <- min(x, na.rm=TRUE)
@@ -1573,7 +1580,7 @@ Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
     na      <- x[is.na(x)]
     null    <- x[is.null(x)]
     cv <- desviop/media
-    
+
 	out <- as.data.frame(t(round(c(Mediana = mediana, DesvP = desviop, "Media+DesvP" = meddesv, Nulos = na + null, Min = minimo, Max = maximo, CV = cv), dig)))
 
 	# Funcao para intervalode confiança da média
@@ -1582,32 +1589,32 @@ Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
 		n <- length(i)
 		v <- (n-1)*var(x[i])/n^2
 		c(m, v)
-    } 
+    }
 	da.boot <- boot(x, cimean, R = nsimu)
-	
+
 	# A função sink permite omitir textos de print() e também de cat()
 	sink(tempfile())
 	    B <- boot.ci(da.boot, conf = nivel, type = tipoci)
-	sink()    
+	sink()
 	if (!is.null(B)){
 		if (tipoci == "norm") {Li <- B$normal[2];Ls <- B$normal[3]
-		} else if(tipoci == "basic") {Li <- B$basic[4]; Ls <- B$basic[5]		
-		} else if(tipoci == "stud") {Li <- B$student[4]; Ls <- B$student[5]		
-		} else if(tipoci == "perc") {Li <- B$percent[4]; Ls <- B$percent[5]		
+		} else if(tipoci == "basic") {Li <- B$basic[4]; Ls <- B$basic[5]
+		} else if(tipoci == "stud") {Li <- B$student[4]; Ls <- B$student[5]
+		} else if(tipoci == "perc") {Li <- B$percent[4]; Ls <- B$percent[5]
 		} else {Li <- B$bca[4]; Ls <- B$bca[5]
 		}
 	} else {Li <- Ls <- media}
-	
+
     media <- paste(round(media,dig), "(", round(Li,dig), ";", round(Ls,dig),")", sep="")
-	
+
 	nm <- c(paste("Media(IC", 100*nivel, "%)", sep=""), names(out))
-	
+
 	out <- as.data.frame(cbind(media, out))
-	colnames(out) <- nm	
+	colnames(out) <- nm
     return(out)
-  }  
+  }
   dados <- as.data.frame(dados)
-  out <- do.call("rbind", 
+  out <- do.call("rbind",
 	lapply(dados, function(X) {if(!is.numeric(X)) NULL else aux(X)}))
   return(out)
 }
@@ -1621,14 +1628,14 @@ Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
 #' @param freq a char string to the aggregation. It can be daily, weekly, monthly, quarterly or yearly
 #' @param dig number of output digits
 #' @return a object from class \code{xts} with the data aggregated
-#' @seealso \code{\link{apply.daily}} 
+#' @seealso \code{\link{apply.daily}}
 #' @examples
 #' data(diario)
 #' d1 <- cvforecast::ConvertData(diario,  tsfrequency = "day", OutType = "xts", OutlierClean = FALSE)
 #' fun1 <- function(x) {c(mean(x, na.rm=TRUE) + sd(x,na.rm=TRUE))}
 #' aggreg(d1[,1:5], fun1, "monthly")
 #' aggreg(d1[,1:5], mean, "monthly")
-#' 
+#'
 #' @export
 aggreg <- function(daxts, FUN, freq = "daily", dig = 4, ...) {
 	stopifnot(require(xts))
@@ -1638,7 +1645,7 @@ aggreg <- function(daxts, FUN, freq = "daily", dig = 4, ...) {
 		ends <- endpoints(x, 'hours', 1)
 		period.apply(x, ends, FUN=FUN)
 	}
-	
+
 	fun <- function(freq, ...) {
 	  switch(freq,
 		daily     = apply.daily,

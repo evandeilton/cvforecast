@@ -4,10 +4,12 @@
 \alias{nparTrend}
 \title{Box and Cox tests and Ljung}
 \usage{
-nparTrend(x, ...)
+nparTrend(x, npoints = 12, ...)
 }
 \arguments{
 \item{x}{'ts' data}
+
+\item{npoints}{data points to test. Default twelve points.}
 
 \item{...}{extra args, if needed.}
 }
