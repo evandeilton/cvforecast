@@ -3,9 +3,9 @@
 \name{cvforecast}
 \alias{cvforecast}
 \alias{package-cvforecast}
-\title{Generic function to perform multiple forecasts by CrossValidation}
+\title{Core function to compute multiple forecasts by Cross-Validation}
 \usage{
-cvforecast(tsdata, tsControl = cvForecastControl(), ...)
+cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
 }
 \arguments{
 \item{tsdata}{data.frame type date-value, ts, mts or xts time series objects}
@@ -13,13 +13,15 @@ cvforecast(tsdata, tsControl = cvForecastControl(), ...)
 \item{tsControl}{generic contol with several args for the modelling process. See
 \code{\link{cvForecastControl}}.}
 
+\item{fcMethod}{accept the forecast method fefined by the user. This argument can be a string or a list, eg. fcMethod = "etsForecast" or a list as fcMethod = list("etsForecast", "HWsForecast"). If NULL, decision is made automatically.}
+
 \item{...}{other arguments}
 }
 \value{
 A list of class 'cvforecast' containing several objetcts from the forecasting process. It includes: betso models (less tahn 6), crossValidation statistics for all models, accuracy of all models, the control, etc. As below.
 }
 \description{
-This function receives data and performes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
+This function receives data and computes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
 }
 \examples{
 #Define cross validation parameters

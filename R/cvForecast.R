@@ -1,11 +1,12 @@
-#' Generic function to perform multiple forecasts by CrossValidation
+#' Core function to compute multiple forecasts by Cross-Validation
 #'
-#' This function receives data and performes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
+#' This function receives data and computes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
 #'
 #'
 #' @param tsdata data.frame type date-value, ts, mts or xts time series objects
 #' @param tsControl generic contol with several args for the modelling process. See
 #'    \code{\link{cvForecastControl}}.
+#' @param fcMethod accept the forecast method fefined by the user. This argument can be a string or a list, eg. fcMethod = "etsForecast" or a list as fcMethod = list("etsForecast", "HWsForecast"). If NULL, decision is made automatically.
 #' @param ... other arguments
 #' @return A list of class 'cvforecast' containing several objetcts from the forecasting process. It includes: betso models (less tahn 6), crossValidation statistics for all models, accuracy of all models, the control, etc. As below.
 #' @keywords crossValidation time series
@@ -51,7 +52,7 @@
 #'sapply(FF, names)
 #'#stopCluster(cl)
 #'@export
-cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
+cvforecast <- function(tsdata, tsControl=cvForecastControl(), fcMethod = NULL, ...) {
 
 	h <- tsControl$maxHorizon
 	cvMethod <- toupper(tsControl$cvMethod)
@@ -89,7 +90,20 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), ...) {
 		x <- ts(x, frequency=1)
 	}
 
-	nmforecast <- Try_error(forecastMethod(x))
+	if (is.null(fcMethod)) { #Automatically
+		nmforecast <- Try_error(forecastMethod(x))
+		
+		if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1 | class(nmforecast) == "try-error") {
+			cat("Series with less than 2 cycles or non-periodic. Try ARIMA and ETS!\n")
+			tsControl$minObs <- 8
+			tsControl$stepSize <- 1
+			nmforecast <- list("auto.arimaForecast","etsForecast")
+		} 
+	} else if (fcMethod=="all"){
+		nmforecast <- list("auto.arimaForecast","etsForecast",        "lmForecast","naiveForecast","rwForecast","stsForecast","thetaForecast","HWnsForecast","HWesForecast","HWsForecast",  "snaiveForecast")
+	} else {
+		nmforecast <- fcMethod
+	}
 
 	if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1 | class(nmforecast) == "try-error") {
 		cat("Series with less than 2 cycles or non-periodic. Try ARIMA and ETS!\n")
