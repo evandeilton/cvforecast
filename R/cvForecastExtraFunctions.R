@@ -1632,15 +1632,21 @@ Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
 #' @export
 aggreg <- function(daxts, FUN, freq = "daily", dig = 4, ...) {
 	stopifnot(require(xts))
-	freq <- match.arg(freq, c("daily","weekly","monthly","quarterly","yearly"))
+	freq <- match.arg(freq, c("hourly","daily","weekly","monthly","quarterly","yearly"))
 
+	apply.hourly <- function(x, FUN, ...) {
+		ends <- endpoints(x, 'hours', 1)
+		period.apply(x, ends, FUN=FUN)
+	}
+	
 	fun <- function(freq, ...) {
 	  switch(freq,
 		daily     = apply.daily,
 		weekly    = apply.weekly,
 		monthly   = apply.monthly,
 		quarterly = apply.quarterly,
-		yearly    = apply.yearly)
+		yearly    = apply.yearly,
+		hourly    = apply.hourly)
 	}
 
 	Fun <- fun(freq)

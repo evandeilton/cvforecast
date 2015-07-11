@@ -1,7 +1,7 @@
 Package: cvforecast
 Type: Package
 Title: Multiple forecasts based on CrossValidation
-Version: 1.01
+Version: 1.20
 Date: 2015-06-29
 Author: Jose E Lopes
 Maintainer: <evandeilton@gmail.com>
