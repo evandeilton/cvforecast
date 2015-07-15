@@ -15,10 +15,10 @@ Note: There are lots of undocumented code. This is a very unsafe experiment I'm 
 
 This is the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models is based on linearity, trend, fit accuracy as for as residual analysis.
 
-### Usage
+#### Usage
 cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
 
-### Run cvforecast example
+#### Run cvforecast example
 Define cross validation parameters
 
 ```{R}
@@ -49,7 +49,7 @@ dim(dadosd)
 ```
 Looping for several forecasts
 ```{R}
-require(plyr)
+require("plyr")
 FF <- llply(dadosd[,1:5], function(X) {
  fit <- try(cvforecast(X, myControl))
  if(class(fit) != "try-error") {
