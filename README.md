@@ -18,6 +18,13 @@ This is the core function of the package. It computes multiple forecasts by the 
 #### Usage
 ```{R}
 cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
+
+# Args
+tsdata    #data.frame type date-value, ts, mts or xts time series objects
+tsControl #generic contol with several args for the modelling process. 
+fcMethod  #accept the forecast method fefined by the user. This argument can
+          #be a string or a list, eg. fcMethod = "etsForecast" or a list as 
+          #fcMethod = list("etsForecast", "HWsForecast"). If NULL, decision is made automatically.
 ```
 
 #### Run cvforecast example
@@ -26,14 +33,14 @@ Define cross validation parameters
 ```{R}
 require("cvforecast")
 myControl <- cvForecastControl(
- minObs = 14,                     # minimum of observations
- stepSize = 10,                   # step size for resampling
- maxHorizon = 30,                 # forecast horizon
- summaryFunc=tsSummary,           # function to sumarize cross-validation accuracy
- cvMethod="MAPE",                 # accuracy statistic for decicion
- tsfrequency='day',               # data points frequencies
- OutlierClean=FALSE,              # clean outlier in the data preparation
- dateformat='%d/%m/%Y %H:%M:%S')  # date format as it is char
+minObs = 14,                     # minimum of observations
+stepSize = 10,                   # step size for resampling
+maxHorizon = 30,                 # forecast horizon
+summaryFunc=tsSummary,           # function to sumarize cross-validation accuracy
+cvMethod="MAPE",                 # accuracy statistic for decicion
+tsfrequency='day',               # data points frequencies
+OutlierClean=FALSE,              # clean outlier in the data preparation
+dateformat='%d/%m/%Y %H:%M:%S')  # date format as it is char
 ```
 Paralell execution improves the processing time
 
@@ -45,23 +52,23 @@ registerDoParallel(cl)            # Register cluster
 Load data and convert to 'ts'
 ```{R}
 data(datasample, package="cvforecast")
-dadosd <- ConvertData(datasample[,1:6], dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day", OutType="ts")
-table(sapply(dadosd, class))      # check class to confirm conversions
-dim(dadosd)
+tsdata <- ConvertData(datasample[,1:6], dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day", OutType="ts")
+table(sapply(tsdata, class))      # check class to confirm conversions
+dim(tsdata)
 ```
 Looping for several forecasts
 ```{R}
 require("plyr")
-FF <- llply(dadosd[,1:5], function(X) {
- fit <- try(cvforecast(X, myControl))
- if(class(fit) != "try-error") {
-   #plot(fit)
-   return(fit)
- } else NA
+FF <- llply(tsdata[,1:5], function(X) {
+fit <- try(cvforecast(X, myControl))
+if(class(fit) != "try-error") {
+return(fit)
+} else NA
 }, .progress = "time")
 
-table(sapply(FF, class))
+summary statistics for first list of best models from the first variable.
+summary.cvforecast(FF[[1]])
 plot(FF[[1]])
-sapply(FF, names)
+str(FF[[1]])
 stopCluster(cl)
 ```
