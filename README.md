@@ -16,7 +16,9 @@ Note: There are lots of undocumented code. This is a very unsafe experiment I'm 
 This is the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models is based on linearity, trend, fit accuracy as for as residual analysis.
 
 #### Usage
+```{R}
 cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
+```
 
 #### Run cvforecast example
 Define cross validation parameters
