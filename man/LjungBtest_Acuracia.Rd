@@ -20,4 +20,7 @@ fit <- auto.arimaForecast(x, h = 10, onlyfc=FALSE)
 LjungBtest_Acuracia(fit)
 plot(fit)
 }
+\author{
+LOPES, J. E.
+}
 

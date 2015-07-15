@@ -1,6 +1,6 @@
 #' Core function to compute multiple forecasts by Cross-Validation
 #'
-#' This function receives data and computes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
+#' This the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models are based on tests as linearity, trend and fit accuracy.
 #'
 #'
 #' @param tsdata data.frame type date-value, ts, mts or xts time series objects
@@ -8,17 +8,15 @@
 #'    \code{\link{cvForecastControl}}.
 #' @param fcMethod accept the forecast method fefined by the user. This argument can be a string or a list, eg. fcMethod = "etsForecast" or a list as fcMethod = list("etsForecast", "HWsForecast"). If NULL, decision is made automatically.
 #' @param ... other arguments
+#' @author LOPES, J. E.
 #' @return A list of class 'cvforecast' containing several objetcts from the forecasting process. It includes: betso models (less tahn 6), crossValidation statistics for all models, accuracy of all models, the control, etc. As below.
 #' @keywords crossValidation time series
 #' @examples
 #'#Define cross validation parameters
 #'myControl <- cvForecastControl(
 #'  minObs = 14,
-#'  stepSize = 5,
+#'  stepSize = 10,
 #'  maxHorizon = 30,
-#'  fixedWindow=TRUE,
-#'  preProcess=FALSE,
-#'  ppMethod='guerrero',
 #'  summaryFunc=tsSummary,
 #'  cvMethod="MAPE",
 #'  tsfrequency='day',
@@ -26,14 +24,14 @@
 #'  dateformat='%d/%m/%Y %H:%M:%S')
 #'
 #'#Paralell execution improves the processing time
-#'
+#'#require(doParallel)
 #' #cl <- makeCluster(4, type='SOCK')
 #' #registerDoParallel(cl)
 #'
 #'#Load data
-#'
-#'data(diario, package="cvforecast")
-#'dadosd <- ConvertData(diario, dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day", OutType="ts")
+#'require(plyr)
+#'data(datasample, package="cvforecast")
+#'dadosd <- ConvertData(datasample[,1:6], dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day", OutType="ts")
 #'table(sapply(dadosd, class))
 #'dim(dadosd)
 #'
@@ -92,13 +90,13 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), fcMethod = NULL, .
 
 	if (is.null(fcMethod)) { #Automatically
 		nmforecast <- Try_error(forecastMethod(x))
-		
+
 		if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1 | class(nmforecast) == "try-error") {
 			cat("Series with less than 2 cycles or non-periodic. Try ARIMA and ETS!\n")
 			tsControl$minObs <- 8
 			tsControl$stepSize <- 1
 			nmforecast <- list("auto.arimaForecast","etsForecast")
-		} 
+		}
 	} else if (fcMethod=="all"){
 		nmforecast <- list("auto.arimaForecast","etsForecast",        "lmForecast","naiveForecast","rwForecast","stsForecast","thetaForecast","HWnsForecast","HWesForecast","HWsForecast",  "snaiveForecast")
 	} else {

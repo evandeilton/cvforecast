@@ -32,4 +32,7 @@ Performs correlations by pairs between two class of variables.
 correlation(mtcars[,1:3])
 correlation(mtcars[,1:3], mtcars[,4:6])
 }
+\author{
+LOPES, J. E.
+}
 

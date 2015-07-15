@@ -21,4 +21,7 @@ Try to find number of differentiations before a time series become stationary. S
 \examples{
 ordem_diferencas(AirPassengers)
 }
+\author{
+LOPES, J. E.
+}
 

@@ -14,4 +14,7 @@ Start(freq, tdata)
 \description{
 This switcher is a internal function that chooses frequencies based on char dates. It's used to help transforming data into ts objects in R
 }
+\author{
+LOPES, J. E.
+}
 

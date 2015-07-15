@@ -12,6 +12,7 @@
 #' @param residlevel confidence level for residual tests
 #' @param dateformat date format for charater dates
 #' @return list of parameters
+#' @author LOPES, J. E.
 #' @examples
 #' # Control
 #' myControl <- cvForecastControl(
@@ -36,6 +37,7 @@ cvForecastControl <- function (stepSize = 1, maxHorizon = 1, minObs = 7, fixedWi
 #' Plot \code{cvforecast} classed objects
 #' @param obj \code{cvforecast} object. See \code{\link{cvforecast}}
 #' @param ... extra args, if needed
+#' @author LOPES, J. E.
 #' @export
 plot.cvforecast <- function(obj, ...) {
 	# Color palette, blues
@@ -215,6 +217,7 @@ cvts2 <- function(x, FUN, tsControl=cvForecastControl(), progress=TRUE, packages
 #' Performs Ljung and Box test and also Durbin-Watson both for autocorrelation on the residuals from the model. It returns also accuracy statistics. See \code{\link{accuracy}}, \code{\link{Box.test}}, \code{\link{dwtest}}.
 #' @param model A forecast model. See \code{\link{cvts2}}.
 #' @param ... extra args, if needed.
+#' @author LOPES, J. E.
 #' @examples
 #' x <- AirPassengers
 #' fit <- auto.arimaForecast(x, h = 10, onlyfc=FALSE)
@@ -246,6 +249,7 @@ LjungBtest_Acuracia <- function(model,...) {
 #' @param verbose is TRUE shows information about the process
 #' @param corsimples if TRUE, returns simple correlation only
 #' @param ... extra args, if needed.
+#' @author LOPES, J. E.
 #' @return Results as a data.frame with correlation, R^2, adjusted R^2 for a lm model and PRESS statistics.
 #' @examples
 #' correlation(mtcars[,1:3])
@@ -297,6 +301,7 @@ correlation <- function(tabela_y, tabela_x=NULL, method = "pearson", digits = 4,
 #' @param alpha confidence level for internal tests
 #' @param plot if TRUE plot results
 #' @param ... extra args, if needed.
+#' @author LOPES, J. E.
 #' @examples
 #' ordem_diferencas(AirPassengers)
 #' @export
@@ -329,6 +334,7 @@ ordem_diferencas <- function(x, alpha = 0.05, plot = TRUE, ...) {
 #'
 #' Automatically estimates the most adequate forecasts method for a 'ts' object based on linearity and trend tests and return a list containing all functions names. See \code{\link{nparTrend}} and \code{\link{linearityTest}} for more.
 #' @param x ts object, univariate time series
+#' @author LOPES, J. E.
 #' @examples
 #' forecastMethod(lynx)
 #' forecastMethod(AirPassengers)
@@ -386,6 +392,7 @@ forecastMethod <- function(x) {
 #'
 #' Compute six residual test on a forecast object an return its p.values. The null hypothesis that the residual don't have the tested characteristic. If p.value is > 5% we reject null.  See \code{\link{Box.test}}, \code{\link{t.test}}, \code{\link{LB.test}}, \code{\link{jarque.bera.test}}, \code{\link{bptest}}   and \code{\link{dwtest}} for more information about the tests
 #' @param forecast object of class forecast
+#' @author LOPES, J. E.
 #' @examples
 #' fcnm <- forecastMethod(lynx)
 #' fun <- get(fcnm[[1]])
@@ -914,6 +921,7 @@ HWesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @param level confidence level. Default is 0.95
 #' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
+#' @author LOPES, J. E.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
 #'fit <- switch.cvforecast(AirPassengers, "etsForecast", h=20, level=95)
@@ -952,6 +960,7 @@ switch.cvforecast <- function(x, nmodelo, h, level=95, onlyfc=FALSE) {
 #' @param x 'ts' data
 #' @param npoints data points to test. Default twelve points.
 #' @param ... extra args, if needed.
+#' @author LOPES, J. E.
 #' @return trend analysis statistics. See \code{\link{rkt}} for more information about tests
 #' @examples
 #' nparTrend(AirPassengers)
@@ -990,6 +999,7 @@ nparTrend <- function (x, npoints = 12, ...) {
 #' Improved verions of R error handler
 #' @param code any stuff you want
 #' @param silent if TRUE doesn't print results
+#' @author LOPES, J. E.
 #' @export
 Try_error <- function(code, silent = TRUE) {
 	W <- NULL
@@ -1010,6 +1020,7 @@ Try_error <- function(code, silent = TRUE) {
 #' @seealso See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{McLeod.Li.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
 #' @param x 'ts' data
 #' @param Test string containing test's names. They are "terasvirta", "white", "keenan", "mcleodLi", "tsay", "tarTest".
+#' @author LOPES, J. E.
 #' @return data.frame with tests statistics and p.values
 #' @examples
 #' linearityTest(AirPassengers)
@@ -1062,10 +1073,11 @@ linearityTest <- function(x, Test) {
 #' @param OutlierClean if TRUE compute outliers clean. See \code{\link{tsclean}}
 #' @param tz timezone. Default is the system tz
 #' @param ... extra args
+#' @author LOPES, J. E.
 #' @examples
-#' data(mensal)
-#' ConvertData(mensal[,1:3], tsfrequency="month", dateformat='%d/%m/%Y %H:%M:%S',outType = "ts")
-#' ConvertData(mensal[,1:3], tsfrequency="month", dateformat='%d/%m/%Y %H:%M:%S',outType = "xts")
+#' data(datasample)
+#' ConvertData(datasample[,1:3], tsfrequency="day", dateformat='%d/%m/%Y %H:%M:%S',outType = "ts")
+#' ConvertData(datasample[,1:3], tsfrequency="day", dateformat='%d/%m/%Y %H:%M:%S',outType = "xts")
 #' #ConvertData(AirPassengers, tsfrequency = "month")
 #' #ConvertData(rnorm(30), tsfrequency = "month")
 #' #ConvertData(rnorm(30), tsfrequency = "month", outType = "xts")
@@ -1155,12 +1167,13 @@ ConvertData <- function(Data, tsfrequency = "day", dateformat='%d/%m/%Y %H:%M:%S
 #' @param XtsData input data set
 #' @param tsfrequency data frequency. It can be "year", "month", "day", "hour", "min" or "sec"
 #' @param horizon number representing total amount of points to generate the sequency of dates for the forecasts
+#' @author LOPES, J. E.
 #' @return A lista conatining data transformed to ts and a date sequency for the forecasts
 #' @examples
 #'x <- ForecastHorizon(rnorm(100), 'day',20)
 #'str(x)
-#' data(diario)
-#' y <- ConvertData(diario[,1:2], tsfrequency = "day", OutType = "xts")
+#' data(datasample)
+#' y <- ConvertData(datasample[,1:2], tsfrequency = "day", OutType = "xts")
 #' y <- ForecastHorizon(y, 'day', 20)
 #' @export
 ForecastHorizon <- function(XtsData, tsfrequency, horizon) {
@@ -1206,6 +1219,7 @@ ForecastHorizon <- function(XtsData, tsfrequency, horizon) {
 #' This switcher is a internal function that chooses frequencies based on char dates. It's used to help transforming data into ts objects in R
 #' @param freq data frequency for the dates. It works with  "year", "month", "day", "hour" and "min".
 #' @param tdata data came from \code{TimeSeries} function
+#' @author LOPES, J. E.
 #' @export
 Start <- function(freq, tdata) {
   if (!freq %in% c("year","month","day","hour","min")) {
@@ -1226,6 +1240,7 @@ Start <- function(freq, tdata) {
 #' @description Returns the PRESS statistic (predictive residual sum of squares).
 #' Useful for evaluating predictive power of regression models.
 #' @param obj A linear regression model (class 'lm'). Required.
+#' @author LOPES, J. E.
 #' @examples
 #' fit <- step(lm(mpg~., data = mtcars), trace = 0)
 #' lm_press_stat(fit)
@@ -1479,6 +1494,7 @@ zoo2TimeSeries <- function(x, ...) {
 #' @param objcvfore 'cvforecst' object
 #' @param cvMethod gof statistic, MAPE, MASE, MAE, etc. \code{\link{accuracy}}
 #' @param residlevel confidence level for residuals tests
+#' @author LOPES, J. E.
 #' @examples
 #' #Define cross validation parameters
 #' myControl <- cvForecastControl(
@@ -1557,6 +1573,7 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
 #' @param tipoci type of confidence interval test. See \code{\link{boot.ci}}
 #' @param nsimu bootstrap simulations number
 #' @param dig number of digits for output
+#' @author LOPES, J. E.
 #' @importFrom boot boot boot.ci
 #' @return data.frame with min, mean, median, max, sd, sd + mean, coefficeint of variation and bootstrap non-parametric confidence interval for the mean
 #' @examples
@@ -1627,11 +1644,12 @@ Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
 #' @param FUN a function defined by the user.
 #' @param freq a char string to the aggregation. It can be daily, weekly, monthly, quarterly or yearly
 #' @param dig number of output digits
+#' @author LOPES, J. E.
 #' @return a object from class \code{xts} with the data aggregated
 #' @seealso \code{\link{apply.daily}}
 #' @examples
-#' data(diario)
-#' d1 <- cvforecast::ConvertData(diario,  tsfrequency = "day", OutType = "xts", OutlierClean = FALSE)
+#' data(datasample)
+#' d1 <- cvforecast::ConvertData(datasample,  tsfrequency = "day", OutType = "xts", OutlierClean = FALSE)
 #' fun1 <- function(x) {c(mean(x, na.rm=TRUE) + sd(x,na.rm=TRUE))}
 #' aggreg(d1[,1:5], fun1, "monthly")
 #' aggreg(d1[,1:5], mean, "monthly")
@@ -1667,9 +1685,11 @@ aggreg <- function(daxts, FUN, freq = "daily", dig = 4, ...) {
 #' This function makes plots forecasts from cvforecast objects by using \code{\link{ggplot2}} framework. This function different from \code{plot.cvforecast} try to plot historical and forecast data including dates in the x axis.
 #' @param obj object of cvforecast class
 #' @param x_labgraf label for x-axis
-#' @param v_titgraf plot title#'
+#' @param v_titgraf plot title
+#' @author LOPES, J. E.
 #' @export
 plotcv <- function(obj, x_labgraf="Diaria", v_titgraf="Historico mais Projecao", ...) {
+stopifnot(require(scales))
   df_dados <- obj$bestForecast[[2]]
   df_dados$data <- as.Date(df_dados$data)
   df_plotr  <- na.omit(df_dados[,c("data","realizado")])
@@ -1683,4 +1703,3 @@ plotcv <- function(obj, x_labgraf="Diaria", v_titgraf="Historico mais Projecao",
     ylab('Utilização (%)') + ggtitle(v_titgraf) + scale_x_date(labels = date_format("%m/%Y"))
   return(ggpl_grafico)
 }
-

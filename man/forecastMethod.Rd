@@ -16,4 +16,7 @@ Automatically estimates the most adequate forecasts method for a 'ts' object bas
 forecastMethod(lynx)
 forecastMethod(AirPassengers)
 }
+\author{
+LOPES, J. E.
+}
 

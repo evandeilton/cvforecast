@@ -18,4 +18,7 @@ fun <- get(fcnm[[1]])
 fit <- fun(AirPassengers, h=10, onlyfc = FALSE)
 Mresid(fit)
 }
+\author{
+LOPES, J. E.
+}
 

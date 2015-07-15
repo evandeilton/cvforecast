@@ -14,4 +14,7 @@ Try_error(code, silent = TRUE)
 \description{
 Improved verions of R error handler
 }
+\author{
+LOPES, J. E.
+}
 

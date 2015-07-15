@@ -12,9 +12,12 @@ plotcv(obj, x_labgraf = "Diaria", v_titgraf = "Historico mais Projecao",
 
 \item{x_labgraf}{label for x-axis}
 
-\item{v_titgraf}{plot title#'}
+\item{v_titgraf}{plot title}
 }
 \description{
 This function makes plots forecasts from cvforecast objects by using \code{\link{ggplot2}} framework. This function different from \code{plot.cvforecast} try to plot historical and forecast data including dates in the x axis.
+}
+\author{
+LOPES, J. E.
 }
 

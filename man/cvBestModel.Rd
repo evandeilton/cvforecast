@@ -33,4 +33,7 @@ x <- AirPassengers
 fit <- cvforecast(x, myControl)
 cvBestModel(fit)
 }
+\author{
+LOPES, J. E.
+}
 

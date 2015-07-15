@@ -30,4 +30,7 @@ fit <- switch.cvforecast(AirPassengers, "etsForecast", h=20, level=95)
 class(fit)
 plot(fit)
 }
+\author{
+LOPES, J. E.
+}
 

@@ -53,4 +53,7 @@ tsfrequency='day',
 OutlierClean=FALSE)
 myControl
 }
+\author{
+LOPES, J. E.
+}
 

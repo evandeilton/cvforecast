@@ -21,6 +21,9 @@ Compute six linearity tests among Terasvirta, White, Keenan, McleodLi, Tsay and 
 linearityTest(AirPassengers)
 linearityTest(AirPassengers, Test="tsay")
 }
+\author{
+LOPES, J. E.
+}
 \seealso{
 See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{McLeod.Li.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
 }

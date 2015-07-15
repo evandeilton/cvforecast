@@ -21,17 +21,14 @@ cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
 A list of class 'cvforecast' containing several objetcts from the forecasting process. It includes: betso models (less tahn 6), crossValidation statistics for all models, accuracy of all models, the control, etc. As below.
 }
 \description{
-This function receives data and computes multiple forecasts by the technique of CrossValidation. The decision about the best model is based on tests as linearity, trend and fit accuracy.
+This the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models are based on tests as linearity, trend and fit accuracy.
 }
 \examples{
 #Define cross validation parameters
 myControl <- cvForecastControl(
  minObs = 14,
- stepSize = 5,
+ stepSize = 10,
  maxHorizon = 30,
- fixedWindow=TRUE,
- preProcess=FALSE,
- ppMethod='guerrero',
  summaryFunc=tsSummary,
  cvMethod="MAPE",
  tsfrequency='day',
@@ -39,14 +36,14 @@ myControl <- cvForecastControl(
  dateformat='\%d/\%m/\%Y \%H:\%M:\%S')
 
 #Paralell execution improves the processing time
-
+#require(doParallel)
 #cl <- makeCluster(4, type='SOCK')
 #registerDoParallel(cl)
 
 #Load data
-
-data(diario, package="cvforecast")
-dadosd <- ConvertData(diario, dateformat='\%d/\%m/\%Y \%H:\%M:\%S', tsfrequency = "day", OutType="ts")
+require(plyr)
+data(datasample, package="cvforecast")
+dadosd <- ConvertData(datasample[,1:6], dateformat='\%d/\%m/\%Y \%H:\%M:\%S', tsfrequency = "day", OutType="ts")
 table(sapply(dadosd, class))
 dim(dadosd)
 
@@ -64,6 +61,9 @@ table(sapply(FF, class))
 plot(FF[[1]])
 sapply(FF, names)
 #stopCluster(cl)
+}
+\author{
+LOPES, J. E.
 }
 \keyword{crossValidation}
 \keyword{series}

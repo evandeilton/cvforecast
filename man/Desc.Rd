@@ -27,4 +27,7 @@ Receives a data.frame, vector or matrix and computes descriptive statistics.
 Desc(cars)
 Desc(rnorm(100, 2, 3))
 }
+\author{
+LOPES, J. E.
+}
 

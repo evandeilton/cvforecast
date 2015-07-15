@@ -27,11 +27,14 @@ ConvertData(Data, tsfrequency = "day",
 Suport several data types included, data.frame(date, value), xts, zoo, ts or numeric. If numeric data are input, R try to build a date pattern for output in case of  \code{outType} is defined as "xts" or "df", otherwise it returns a ts object.
 }
 \examples{
-data(mensal)
-ConvertData(mensal[,1:3], tsfrequency="month", dateformat='\%d/\%m/\%Y \%H:\%M:\%S',outType = "ts")
-ConvertData(mensal[,1:3], tsfrequency="month", dateformat='\%d/\%m/\%Y \%H:\%M:\%S',outType = "xts")
+data(datasample)
+ConvertData(datasample[,1:3], tsfrequency="day", dateformat='\%d/\%m/\%Y \%H:\%M:\%S',outType = "ts")
+ConvertData(datasample[,1:3], tsfrequency="day", dateformat='\%d/\%m/\%Y \%H:\%M:\%S',outType = "xts")
 #ConvertData(AirPassengers, tsfrequency = "month")
 #ConvertData(rnorm(30), tsfrequency = "month")
 #ConvertData(rnorm(30), tsfrequency = "month", outType = "xts")
+}
+\author{
+LOPES, J. E.
 }
 

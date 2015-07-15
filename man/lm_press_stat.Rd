@@ -17,4 +17,7 @@ Useful for evaluating predictive power of regression models.
 fit <- step(lm(mpg~., data = mtcars), trace = 0)
 lm_press_stat(fit)
 }
+\author{
+LOPES, J. E.
+}
 

@@ -22,8 +22,11 @@ Suport several data types included xts, zoo, ts or numeric. If numeric data are 
 \examples{
 x <- ForecastHorizon(rnorm(100), 'day',20)
 str(x)
-data(diario)
-y <- ConvertData(diario[,1:2], tsfrequency = "day", OutType = "xts")
+data(datasample)
+y <- ConvertData(datasample[,1:2], tsfrequency = "day", OutType = "xts")
 y <- ForecastHorizon(y, 'day', 20)
+}
+\author{
+LOPES, J. E.
 }
 

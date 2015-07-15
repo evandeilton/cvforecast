@@ -14,4 +14,7 @@ plot.cvforecast(obj, ...)
 \description{
 Plot \code{cvforecast} classed objects
 }
+\author{
+LOPES, J. E.
+}
 

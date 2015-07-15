@@ -22,4 +22,7 @@ Use Mann-Kendall test (MK) and the Seasonal and the Regional Kendall Tests for t
 \examples{
 nparTrend(AirPassengers)
 }
+\author{
+LOPES, J. E.
+}
 

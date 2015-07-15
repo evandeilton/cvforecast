@@ -22,11 +22,14 @@ a object from class \code{xts} with the data aggregated
 Aggregate xts object by a given function. It can be any function defined by the user. Actually it's possible to aggregate data by day, month, week, quarter and year.
 }
 \examples{
-data(diario)
-d1 <- cvforecast::ConvertData(diario,  tsfrequency = "day", OutType = "xts", OutlierClean = FALSE)
+data(datasample)
+d1 <- cvforecast::ConvertData(datasample,  tsfrequency = "day", OutType = "xts", OutlierClean = FALSE)
 fun1 <- function(x) {c(mean(x, na.rm=TRUE) + sd(x,na.rm=TRUE))}
 aggreg(d1[,1:5], fun1, "monthly")
 aggreg(d1[,1:5], mean, "monthly")
+}
+\author{
+LOPES, J. E.
 }
 \seealso{
 \code{\link{apply.daily}}
