@@ -65,8 +65,9 @@ if(class(fit) != "try-error") {
 return(fit)
 } else NA
 }, .progress = "time")
-
-summary statistics for first list of best models from the first variable.
+```
+Summary statistics for first list of best models from the first variable.
+```{R}
 summary.cvforecast(FF[[1]])
 plot(FF[[1]])
 str(FF[[1]])
