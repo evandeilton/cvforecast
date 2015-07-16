@@ -389,37 +389,41 @@ forecastMethod <- function(x) {
 }
 
 #' Time series forecast residual analysis
-#'
-#' Compute six residual test on a forecast object an return its p.values. The null hypothesis that the residual don't have the tested characteristic. If p.value is > 5% we reject null.  See \code{\link{Box.test}}, \code{\link{t.test}}, \code{\link{LB.test}}, \code{\link{jarque.bera.test}}, \code{\link{bptest}}   and \code{\link{dwtest}} for more information about the tests
+#' 
+#' Compute six residual test on a forecast object an return its p.values. The null hypothesis that the residual don't have the tested characteristic. If p.value is > 5\% we reject null. 
 #' @param forecast object of class forecast
-#' @author LOPES, J. E.
+#' @seealso See \code{\link{Box.test}}, \code{\link{t.test}}, \code{\link{LB.test}}, \code{\link{jarque.bera.test}}, \code{\link{bptest}}   and \code{\link{dwtest}} for more information about the tests.
 #' @examples
 #' fcnm <- forecastMethod(lynx)
 #' fun <- get(fcnm[[1]])
 #' fit <- fun(AirPassengers, h=10, onlyfc = FALSE)
 #' Mresid(fit)
 #' @export
-Mresid <- function(forecast) {
+Mresid <- function(fit) {
 	out <- c()
-	x <- na.omit(as.numeric(forecast$x))
-	r <- na.omit(as.numeric(forecast$residuals))
+	x <- na.omit(as.numeric(fit$x))
+	r <- na.omit(as.numeric(fit$residuals))
 
 	l <- abs(length(x)-length(r))
-	x <- x[-seq(l)]
+	if (l > 0) x <- x[-seq(l)]
 
-	# testes para independencia dos residuos
-	independencia <- Try_error(Box.test(r, lag=10, type = "Ljung-Box")$p.value)
-	# Teste para ver se a media tende a zero
-	media_zero <- Try_error(t.test(r, alternative='two.sided', mu=0.0, conf.level=.95)$p.value)
-	# Teste para ver se os residuos sao ruido branco
-	ruido_branco <- Try_error(LB.test(forecast, no.error=TRUE)$p.value)
-	# Teste para normalidade dos res?duos jarque-bera
-	normalidade <- Try_error(jarque.bera.test(r)$p.value)
-	# Teste de heterocedasticidade dos res?duos p-valor >0,05 indica homocedasticidade
-	homocedasticidade <- Try_error(bptest(r ~ x)$p.value)
-
-	# Teste de durbin-watson para autocorrelacao dos res?duos se dw~2 ? independente
-	autocorrelacao <- Try_error(dwtest(r ~ x)$p.value)
+	# NULL: Residuals are independent
+	independencia <-  Try_error(TSA::LB.test(fit, lag=10, type = "Box-Pierce", no.error=TRUE)$p.value)
+	
+	# NULL: Residuals are have zero mean
+	media_zero <-  Try_error(t.test(r, alternative='two.sided', mu=0.0, conf.level=.95)$p.value)
+	
+	# NULL: Residuals are white noise
+	ruido_branco <-  Try_error(TSA::LB.test(fit, lag=10, type = "Ljung-Box", no.error=TRUE)$p.value)
+	
+	# NULL: Residuals have Gaussian structure
+	normalidade <-  Try_error(tseries::jarque.bera.test(r)$p.value)
+	
+	# NULL: Residuals are heterokedastic
+	homocedasticidade <-  Try_error(lmtest::bptest(r ~ x)$p.value)
+	
+	# NULL: Residuals have auto-correlation structure
+	autocorrelacao <-  Try_error(lmtest::dwtest(r ~ x)$p.value)
 
 	p0 <- if (class(independencia) == "numeric") as.numeric(independencia) else NA
 	p1 <- if (class(media_zero) == "numeric") 	 as.numeric(media_zero) else NA
@@ -428,11 +432,11 @@ Mresid <- function(forecast) {
 	p4 <- if (class(homocedasticidade) == "numeric") as.numeric(homocedasticidade) else NA
 	p5 <- if (class(autocorrelacao) == "numeric") as.numeric(autocorrelacao) else NA
 
-	df.pvalor <- round(c(p0, p1, p2, p3, p4, p5), 4)
-	names(df.pvalor) <- c("independencia","media_zero","ruido_branco","normalidade","homocedasticidade","autocorrelacao")
+	df.pvalor <- round(data.frame(p0, p1, p2, p3, p4, p5),5)
+	colnames(df.pvalor) <- c("Box.test","t.test","LB.test","JB.test","BP.test","DW.test")
+	rownames(df.pvalor) <- c("p-value")
 	return(df.pvalor)
 }
-
 
 #' Test if an object exists
 #' @param object any object present into the environment
@@ -1703,3 +1707,49 @@ stopifnot(require(scales))
     ylab('Utilização (%)') + ggtitle(v_titgraf) + scale_x_date(labels = date_format("%m/%Y"))
   return(ggpl_grafico)
 }
+
+#' Default summary for Cross-validation forecasts
+#'
+#' Summarizes \code{cvforecast} classed objects. The output is statistics about the best models fited by \code{cvforecast} function. It may include residual tests results and simple accuracy, cross-validation accuracy and a plot for the models.
+#' @param obj \code{cvforecast} object
+#' @param digits number of digits for the default print output
+#' @param plot if TRUE, plot forecast for best models
+#' @param accuracy.best if TRUE, compute simple accuracy statistics for the best final models
+#' @param cv.accuracy if TRUE, compute accuracy of the cross-validation points from 1 to horizon
+#' @author LOPES, J. L.
+#' @seealso \code{\link{cvforecast}}, \code{\link{accuracy}}, \code{\link{Mresid}}
+#' @export
+summary.cvforecast <- function(obj, digits = 4, plot=TRUE, accuracy.best = TRUE, cv.accuracy = FALSE) {
+  if(class(obj) != "cvforecast") stop("'cvforecast' required!\n")
+  
+  res <- ldply(obj$melhores, function(X) {
+    tmp <- Try_error(Mresid(X))
+    if(class(tmp)!="try-error") tmp else NULL
+  })
+  cat("-----------------------------------------------------------------------\n")
+  cat("Residual Analysis for the best models!\n")
+  print(res, digits = digits)
+  cat("-----------------------------------------------------------------------\n")
+  
+  cv.best <- if (accuracy.best) {
+    tmp <- ldply(obj$melhores, function(X) {
+      tmp <- Try_error(accuracy(X))
+      if(class(tmp) !="try-error") tmp else NULL
+    })
+    cat("-----------------------------------------------------------------------\n")
+    cat("Accuracy for the best models!\n")
+    print(tmp, digits = digits)
+    cat("-----------------------------------------------------------------------\n")
+  }
+
+  cv.ac <- if (cv.accuracy) {
+    cat("-----------------------------------------------------------------------\n")
+    cat("Cross-Validation Accuracy for the best models!\n")
+    print(obj$acuracia, digits = digits)
+    cat("-----------------------------------------------------------------------\n")
+    } else NULL
+  
+  if(plot) plot(obj)
+  return(invisible(list(cv.best=cv.best, cv.ac=cv.ac, residuals = res)))
+}
+
