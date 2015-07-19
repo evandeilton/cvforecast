@@ -32,63 +32,11 @@ cvForecastControl <- function (stepSize = 1, maxHorizon = 1, minObs = 7, fixedWi
 		tsfrequency=tsfrequency, OutlierClean=OutlierClean, residlevel=residlevel, dateformat=dateformat)
 }
 
-#' Default plot for Cross-validation forecast
-#'
-#' Plot \code{cvforecast} classed objects
-#' @param obj \code{cvforecast} object. See \code{\link{cvforecast}}
-#' @param ... extra args, if needed
-#' @author LOPES, J. E.
-#' @export
-plot.cvforecast <- function(obj, ...) {
-	# Color palette, blues
-	mypalette <- c("#F7FBFF","#DEEBF7","#C6DBEF","#9ECAE1","#6BAED6","#4292C6","#2171B5","#08519C","#08306B")
-
-	estatisticas <- obj$cv_stat
-	cvMethod <- obj$myControl$cvMethod
-	melhores <- obj$melhores
-	#check_trend <- obj$tendencia
-	linear <- obj$linear
-
-	## Plot CrossValidation
-	estatisticas <- estatisticas[, names(melhores), drop=FALSE]
-	Plot <- data.frame(id = 1:nrow(estatisticas), estatisticas)
-	P <- ts(Plot[,-1, drop=FALSE])
-
-	## Sequencia com impar para gera??o dos gr?ficos
-	## Plot forecasts
-	if (length(melhores) > 3) {
-		lfor <- c(1, 1, 2, 2, 3:(length(melhores)))
-		lrep <- rep(length(melhores) + 1, 2)
-		if(length(lfor)%%2 != 0) {
-			lfor[length(lfor)+1] <- 0
-		}
-		nf <- layout(matrix(c(lfor, lrep), byrow=TRUE, ncol=2))
-	} else if (length(melhores) == 3){
-		lfor <- c(1, 1, 2, 2, 3, 3, 4,4)
-		nf <- layout(matrix(c(lfor), byrow=TRUE, ncol=2))
-	} else if (length(melhores) == 2){
-	  lfor <- c(1, 1, 2, 2, 3, 3)
-	  nf <- layout(matrix(c(lfor), byrow=TRUE, ncol=2))
-	} else if (length(melhores) == 1){
-	  lfor <- c(1, 1, 2, 2)
-	  nf <- layout(matrix(c(lfor), byrow=TRUE, ncol=2))
-	}
-
-	par(nf, mar = c(2.5, 4, 1.5, 1.5))
-	lapply(melhores, function(X) {
-		if (class(X)[1] != "try-error" | !is.null(X))
-			try(plot(X, las=1))
-		}
-	)
-	plot(P, col=mypalette[9:5], lwd=2, plot.type = "single", xlab="", ylab="", main=paste(toupper(cvMethod), "Statistic vs Cross-Validation Horizon", sep=""), las=1)
-	legend("topleft", colnames(P), lwd=2, col=mypalette[9:5], cex = 1, bty="n")
-}
-
 #' Function to cross-validate a time series
 #'
 #' Main function to perform cross-validation. This function was firstly created by Zach Mayer (https://github.com/zachmayer/cv.ts) thanks, and adapted by LOPES. J. E. It
 #' @param x time series object of class 'ts'
-#' @param FUN forecast wrapper function. These are some ones stsForecast, hwForecast, tbatsForecast, auto.arimaForecast, sesForecast, meanForecast, holtForecast, batsForecast, etsForecast, arimaForecast, lmForecast, thetaForecast, rwForecast, snaiveForecast, naiveForecast, nnetarForecast, HWsForecast, HWnsForecast and HWesForecast. This function works also in parallel very fast in multiple core computers.
+#' @param FUN forecast wrapper function. These are some ones fc_sts, fc_hw, fc_tbats, fc_auto.arima, fc_ses, fc_mean, fc_holt, fc_bats, fc_ets, fc_arima, fc_lm, fc_theta, fc_rw, sfc_naive, fc_naive, fc_nnetar, fc_hws, fc_hwns and fc_hwes. This function works also in parallel very fast in multiple core computers.
 #' @param tsControl Generic control for cross-validation process. See \code{\link{cvForecastControl}}.
 #' @param progress if TRUE, show the progress bar.
 #' @param packages extra R packages required by R. Default is NULL
@@ -106,7 +54,7 @@ plot.cvforecast <- function(obj, ...) {
 #' #cl <- makeCluster(4, type='SOCK')
 #' #registerDoParallel(cl)
 #' x <- AirPassengers
-#' fit <- cvts2(x, auto.arimaForecast)
+#' fit <- cvts2(x, fc_auto.arima)
 #' #stopCluster(cl)
 #' @export
 cvts2 <- function(x, FUN, tsControl=cvForecastControl(), progress=TRUE, packages=NULL, ...) {
@@ -220,19 +168,19 @@ cvts2 <- function(x, FUN, tsControl=cvForecastControl(), progress=TRUE, packages
 #' @author LOPES, J. E.
 #' @examples
 #' x <- AirPassengers
-#' fit <- auto.arimaForecast(x, h = 10, onlyfc=FALSE)
+#' fit <- fc_auto.arima(x, h = 10, onlyfc=FALSE)
 #' LjungBtest_Acuracia(fit)
 #' plot(fit)
 #' @export
 LjungBtest_Acuracia <- function(model,...) {
 	bt <- Box.test(residuals(model), lag=10, type="Ljung", fitdf=length(coef(model)))
 
-	# Teste de autocorrela??o
+	# Auto-correlation
 	LJungBox <- data.frame(LJB_X_quad = round(bt[[1]], 5), LJB_gl = bt[[2]], LJB_p.valor = round(bt[[3]], 5))
 	rownames(LJungBox) <- c()
 	acc <- data.frame(round(accuracy(model), 5))
 
-	## Correla??o Serial por Durbin-Watson
+	## Serial correlation by Durbin-Watson
 	D.Watson <- round(dwtest(model$x~residuals(model))$statistic, 5)
 
 	res <- cbind(acc, LJungBox, D.Watson)
@@ -267,17 +215,16 @@ correlation <- function(tabela_y, tabela_x=NULL, method = "pearson", digits = 4,
 		tab_cor <- round(cor(tabela_y, tabela_x, use = "complete.obs", method=method, ...), digits)
 		dados <- cbind(tabela_y, tabela_x)
 	}
-	if (corsimples) { # Tabela de correla??o simples nxn
+	if (corsimples) {
 	tab_cor <- round(cor(dados, use = "complete.obs", method=method, ...), digits)
 	return(tab_cor)
 	} else {
-	tab_cor[lower.tri(tab_cor, diag=TRUE)] <- NA 	# Prepara para dropar correla??es duplicadas
-	tab_cor <- as.data.frame(as.table(tab_cor))  	# Transforma em uma tabela de tr?s colunas
-	tab_cor <- na.omit(tab_cor)  					# Elimina os valores missings
+	tab_cor[lower.tri(tab_cor, diag=TRUE)] <- NA 
+	tab_cor <- as.data.frame(as.table(tab_cor))
+	tab_cor <- na.omit(tab_cor)
 	names(tab_cor) <- c("Y","X", "Cor")
-	tab_cor <- tab_cor[order(tab_cor$Y, -abs(tab_cor$Cor)),]  # Ordena pelas maiores correla??es
+	tab_cor <- tab_cor[order(tab_cor$Y, -abs(tab_cor$Cor)),] 
 	rownames(tab_cor) <- 1:nrow(tab_cor)
-	## Estimar e anexar o R-Quadrado ? rela??o
 	r2 <- nm <- c()
 	for (i in 1:nrow(tab_cor)) {
 		formu <- as.formula(paste(as.character(unlist(tab_cor[i,1:2])), collapse="~"))
@@ -292,43 +239,6 @@ correlation <- function(tabela_y, tabela_x=NULL, method = "pearson", digits = 4,
 	return(out)
 	}
 }
-
-#' Auto-find time series number of differences
-#'
-#' Try to find number of differentiations before a time series become stationary. See \code{\link{ndiffs}} for more details about techniques of decision.
-#'
-#' @param x ts data object
-#' @param alpha confidence level for internal tests
-#' @param plot if TRUE plot results
-#' @param ... extra args, if needed.
-#' @author LOPES, J. E.
-#' @examples
-#' ordem_diferencas(AirPassengers)
-#' @export
-ordem_diferencas <- function(x, alpha = 0.05, plot = TRUE, ...) {
-#if (class(x) == "numeric") {
-#	cat("Serie numerica, convertendo em 'ts' com frequency = 2!\n")
-#	x <- ts(x, frequency = 2, )}
-	ns <- nsdiffs(x)
-	if(ns > 0) {
-	  xstar <- diff(x, lag=frequency(x), differences=ns)
-	} else {
-	  xstar <- x
-	}
-	nd <- ndiffs(xstar, alpha=alpha)
-	if(nd > 0) {
-	  xstar <- diff(xstar,differences=nd)
-	}
-	if (plot & nd > 0){
-		par(mfrow=c(2,1), mar=c(3,4,1,1))
-		plot(x, col=2, ylab="Before", xlab="Time", main="")
-		plot(xstar, col=3, ylab="After", xlab="Time", main="")
-		par(mfrow=c(1,1))
-	}
-	cat("Became stationary after", nd, "differences!\n")
-	return(invisible(list(antes = x, depois = xstar, ndifs = nd)))
-}
-
 
 #' Find best forecast methods based on trend and linearity
 #'
@@ -346,21 +256,20 @@ forecastMethod <- function(x) {
   if (class(x)[1]!='ts' & class(x)[1] == "numeric"){
     x <- ts(x, frequency=1)
   }
-  # s?rie curta
+  # Short series
   if(length(as.numeric(x)) < 2*max(cycle(x)) | max(cycle(x))==1) {
     short <- TRUE
   } else {
     short <- FALSE
   }
-  if (!short) {# S? inicia testes se a s?rie for longa
-    # Objetos vazios para os resultados
+  if (!short) {
     trend <- check_trend <- nlTests <- c()
 
-    # Teste de tend?ncia n?o param?trico
+    # Non-parametric trend tests
     trend <- nparTrend(x)
     check_trend <- unname(trend["trend_sign"] != 0)
 
-    # Teste de linearidade para a s?rie
+    # Linearity tests
     nlTests <- list("terasvirta","white", "keenan", "tsay","tarTest")
     linear  <- Try_error(na.omit(sapply(nlTests,  function(n) linearityTest(x, n)$p.value)))
 
@@ -371,19 +280,19 @@ forecastMethod <- function(x) {
     }
   }
 
-  ## Decis?o
+  ## Decision
   if (short) {
-    ## Modelos para S?ries curtas ou sem frequencia definida
-    metodo <- list("auto.arimaForecast","etsForecast","lmForecast")
+    ## Short time series or undefined frequencies 
+    metodo <- list("fc_auto.arima","fc_ets","fc_lm")
   } else if(linear & !check_trend) {
-    ## Modelos para S?ries lineares mas sem tend?ncia
-    metodo <- list("naiveForecast","rwForecast","stsForecast","thetaForecast","HWnsForecast","HWesForecast")
+    ## Linearity without trend
+    metodo <- list("fc_naive","fc_rw","fc_sts","fc_theta","fc_hwns","fc_hwes")
   } else if(linear & check_trend) {
-    ## Modelos para S?ries lineares e com tend?ncia
-    metodo <- list("auto.arimaForecast","etsForecast","HWsForecast","snaiveForecast")
+    ## Linearity with trend
+    metodo <- list("fc_auto.arima","fc_ets","fc_hws","sfc_naive")
   } else {
-    ## Modelos para S?ries n?o lineares com ou sem tend?ncia
-    metodo <- list("snaiveForecast","lmForecast","HWsForecast")
+    ## Non-linearity with or without trend
+    metodo <- list("sfc_naive","fc_lm","fc_hws")
   }
   return(metodo)
 }
@@ -471,12 +380,12 @@ tsSummary <- function(P, A) {
 #'
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- meanForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_mean(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-meanForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
+fc_mean <- function(x, h, level = 95, onlyfc=TRUE, ...) {
   fc <- forecast::meanf(x, h, ..., level = level)
   if (onlyfc) fc$mean
   else fc
@@ -490,12 +399,12 @@ meanForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- naiveForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_naive(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-naiveForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
+fc_naive <- function(x, h, level = 95, onlyfc=TRUE, ...) {
   fc <- forecast::naive(x, h, ..., level=level)
   if (onlyfc) fc$mean
   else fc
@@ -509,12 +418,12 @@ naiveForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- snaiveForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- sfc_naive(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-snaiveForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
+sfc_naive <- function(x, h, level = 95, onlyfc=TRUE, ...) {
   fc <- forecast::snaive(x, h, ..., level=level)
   if (onlyfc) fc$mean
   else fc
@@ -528,12 +437,12 @@ snaiveForecast <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- rwForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_rw(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-rwForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
+fc_rw <- function(x,h,level=95, onlyfc=TRUE, ...) {
   fc <- forecast::rwf(x, h, ..., level=level)
   if (onlyfc) fc$mean
   else fc
@@ -547,12 +456,12 @@ rwForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- thetaForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_theta(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-thetaForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
+fc_theta <- function(x,h,level=95, onlyfc=TRUE, ...) {
   fc <- forecast::thetaf(x, h, ..., level=level)
   if (onlyfc) fc$mean
   else fc
@@ -568,12 +477,12 @@ thetaForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- lmForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_lm(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-lmForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
+fc_lm <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
   x <- data.frame(x)
   colnames(x) <- 'x'
   if (is.null(xreg) & is.null(newxreg)) {
@@ -612,12 +521,12 @@ lmForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- stsForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_sts(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-stsForecast <- function(x,h,level=95,  onlyfc=TRUE, ...) {
+fc_sts <- function(x,h,level=95,  onlyfc=TRUE, ...) {
   fit <- StructTS(x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -633,12 +542,12 @@ stsForecast <- function(x,h,level=95,  onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- stl.Forecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_stl(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-stl.Forecast <- function(x, h, level=95, method='ets',  onlyfc=TRUE, ...) {
+fc_stl <- function(x, h, level=95, method='ets',  onlyfc=TRUE, ...) {
   fc <- forecast::stlf(x, h=h, method=method, level=level, ...)
   if (onlyfc) fc$mean
   else fc
@@ -654,12 +563,12 @@ stl.Forecast <- function(x, h, level=95, method='ets',  onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- arimaForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_arima(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-arimaForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
+fc_arima <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
   fit <- forecast::Arima(x, xreg=xreg, ...)
   fc <- forecast::forecast(fit, h=h, level=level, xreg=newxreg)
   if (onlyfc) fc$mean
@@ -676,12 +585,12 @@ arimaForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...)
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- auto.arimaForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_auto.arima(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-auto.arimaForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
+fc_auto.arima <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
   fit <- forecast::auto.arima(x, xreg=xreg, ...)
   fc <- forecast::forecast(fit, h=h, level=level, xreg=newxreg)
   if (onlyfc) fc$mean
@@ -696,12 +605,12 @@ auto.arimaForecast <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- etsForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_ets(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-etsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
+fc_ets <- function(x,h,level=95, onlyfc=TRUE, ...) {
   fit <- forecast::ets(x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -716,12 +625,12 @@ etsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- batsForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_bats(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-batsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
+fc_bats <- function(x,h,level=95, onlyfc=TRUE, ...) {
   fit <- forecast::bats(x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -736,12 +645,12 @@ batsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- tbatsForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_tbats(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-tbatsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
+fc_tbats <- function(x,h,level=95, onlyfc=TRUE, ...) {
   fit <- forecast::tbats(x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -757,12 +666,12 @@ tbatsForecast <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- nnetarForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_nnetar(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-nnetarForecast <- function(x, h, level=95,  onlyfc=TRUE, nn_p=1, ...) {
+fc_nnetar <- function(x, h, level=95,  onlyfc=TRUE, nn_p=1, ...) {
   fit <- forecast::nnetar(x, p=nn_p, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -777,12 +686,12 @@ nnetarForecast <- function(x, h, level=95,  onlyfc=TRUE, nn_p=1, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- sesForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_ses(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-sesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
+fc_ses <- function(x, h, level=95, onlyfc=TRUE, ...) {
   fit <- forecast::ses(x, h=h, level=level, ...)
   fc  <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -797,12 +706,12 @@ sesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- holtForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_holt(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-holtForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
+fc_holt <- function(x, h, level=95,  onlyfc=TRUE, ...) {
   fit <- forecast::holt(x, h=h, level=level, ...)
   fc  <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -817,12 +726,12 @@ holtForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- hwForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_hw(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-hwForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
+fc_hw <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 	## Check Seasonality, if YES, use Holt, else use HW
 	if (sum(cycle(x))==length(x)) {
 		fit <- forecast::holt(x, ...)
@@ -843,12 +752,12 @@ hwForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- meanForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_mean(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-meanForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
+fc_mean <- function(x, h, level=95,  onlyfc=TRUE, ...) {
   fit <- forecast::meanf(x, ...)
   fc  <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -864,12 +773,12 @@ meanForecast <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- HWsForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_hws(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-HWsForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
+fc_hws <- function(x, h, level=95, onlyfc=TRUE, ...) {
   fit <- HoltWinters(x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -884,12 +793,12 @@ HWsForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- HWnsForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_hwns(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-HWnsForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
+fc_hwns <- function(x, h, level=95, onlyfc=TRUE, ...) {
   fit <- HoltWinters(x, gamma = FALSE, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -904,12 +813,12 @@ HWnsForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- HWesForecast(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_hwes(AirPassengers, h=10, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-HWesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
+fc_hwes <- function(x, h, level=95, onlyfc=TRUE, ...) {
   fit <- HoltWinters(x, gamma = FALSE, beta = FALSE, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -920,7 +829,7 @@ HWesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #'
 #' Auxiliary switcher that helps the forecasting process. If you pass it a forecast wrapper it returns the forecast model.
 #' @param x 'ts' data
-#' @param nmodelo string with forecast wraper, eg. etsForecast
+#' @param nmodelo string with forecast wraper, eg. fc_ets
 #' @param h forecast horizon
 #' @param level confidence level. Default is 0.95
 #' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
@@ -928,33 +837,32 @@ HWesForecast <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' @author LOPES, J. E.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#'fit <- switch.cvforecast(AirPassengers, "etsForecast", h=20, level=95)
+#'fit <- switch.cvforecast(AirPassengers, "fc_ets", h=20, level=95)
 #'class(fit)
 #'plot(fit)
 #'@export
 switch.cvforecast <- function(x, nmodelo, h, level=95, onlyfc=FALSE) {
   switch(nmodelo,
-		stsForecast = stsForecast(x, h=h, level=level, onlyfc=onlyfc),
-		hwForecast = hwForecast(x, h=h, level=level, onlyfc=onlyfc),
-		tbatsForecast = tbatsForecast(x, h=h, level=level),
-		auto.arimaForecast = auto.arimaForecast(x, h=h, level=level, onlyfc=onlyfc),
-		#stl.Forecast = stl.Forecast(x, h=h, level=level),
-		sesForecast = sesForecast(x, h=h, level=level, onlyfc=onlyfc),
-		meanForecast = meanForecast(x, h=h, level=level, onlyfc=onlyfc),
-		holtForecast = holtForecast(x, h=h, level=level, onlyfc=onlyfc),
-		batsForecast = batsForecast(x, h=h, level=level, onlyfc=onlyfc),
-		etsForecast = etsForecast(x, h=h, level=level, onlyfc=onlyfc),
-		arimaForecast = arimaForecast(x, h=h, level=level, onlyfc=onlyfc),
-		lmForecast = lmForecast(x, h=h, level=level, onlyfc=onlyfc),
-		thetaForecast = thetaForecast(x, h=h, level=level, onlyfc=onlyfc),
-		rwForecast = rwForecast(x, h=h, level=level, onlyfc=onlyfc),
-		snaiveForecast = snaiveForecast(x, h=h, level=level, onlyfc=onlyfc),
-		naiveForecast = naiveForecast(x, h=h, level=level, onlyfc=onlyfc),
-		meanForecast = meanForecast(x, h=h, level=level, onlyfc=onlyfc),
-		nnetarForecast = nnetarForecast(x, h=h, level=level, onlyfc=onlyfc),
-		HWsForecast = HWsForecast(x, h=h, level=level, onlyfc=onlyfc),
-		HWnsForecast = HWnsForecast(x, h=h, level=level, onlyfc=onlyfc),
-		HWesForecast = HWesForecast(x, h=h, level=level, onlyfc=onlyfc)
+		fc_sts = fc_sts(x, h=h, level=level, onlyfc=onlyfc),
+		fc_hw = fc_hw(x, h=h, level=level, onlyfc=onlyfc),
+		fc_tbats = fc_tbats(x, h=h, level=level),
+		fc_auto.arima = fc_auto.arima(x, h=h, level=level, onlyfc=onlyfc),
+		#fc_stl   = fc_stl(x, h=h, level=level),
+		fc_ses    = fc_ses(x, h=h, level=level, onlyfc=onlyfc),
+		fc_holt   = fc_holt(x, h=h, level=level, onlyfc=onlyfc),
+		fc_bats   = fc_bats(x, h=h, level=level, onlyfc=onlyfc),
+		fc_ets    = fc_ets(x, h=h, level=level, onlyfc=onlyfc),
+		fc_arima  = fc_arima(x, h=h, level=level, onlyfc=onlyfc),
+		fc_lm     = fc_lm(x, h=h, level=level, onlyfc=onlyfc),
+		fc_theta  = fc_theta(x, h=h, level=level, onlyfc=onlyfc),
+		fc_rw     = fc_rw(x, h=h, level=level, onlyfc=onlyfc),
+		sfc_naive = sfc_naive(x, h=h, level=level, onlyfc=onlyfc),
+		fc_naive  = fc_naive(x, h=h, level=level, onlyfc=onlyfc),
+		fc_mean   = fc_mean(x, h=h, level=level, onlyfc=onlyfc),
+		fc_nnetar = fc_nnetar(x, h=h, level=level, onlyfc=onlyfc),
+		fc_hws    = fc_hws(x, h=h, level=level, onlyfc=onlyfc),
+		fc_hwns   = fc_hwns(x, h=h, level=level, onlyfc=onlyfc),
+		fc_hwes   = fc_hwes(x, h=h, level=level, onlyfc=onlyfc)
 	)
 }
 
@@ -1683,73 +1591,3 @@ aggreg <- function(daxts, FUN, freq = "daily", dig = 4, ...) {
 	Dc <- do.call("cbind.xts", La)
 	return(round(Dc, dig))
 }
-
-#' Plot forecasts from cvforecast objetc
-#'
-#' This function makes plots forecasts from cvforecast objects by using \code{\link{ggplot2}} framework. This function different from \code{plot.cvforecast} try to plot historical and forecast data including dates in the x axis.
-#' @param obj object of cvforecast class
-#' @param x_labgraf label for x-axis
-#' @param v_titgraf plot title
-#' @author LOPES, J. E.
-#' @export
-plotcv <- function(obj, x_labgraf="Diaria", v_titgraf="Historico mais Projecao", ...) {
-stopifnot(require(scales))
-  df_dados <- obj$bestForecast[[2]]
-  df_dados$data <- as.Date(df_dados$data)
-  df_plotr  <- na.omit(df_dados[,c("data","realizado")])
-  df_plotp  <- na.omit(df_dados[,c("data","forecast","li","ls")])
-
-  ggpl_grafico <- ggplot() + geom_line(data=df_plotr,aes(x=data,y = realizado),color="blue", size=1)  +
-    geom_line(data=df_plotp,aes(x=data,y=forecast),color="darkgreen", size=1) +
-    geom_line(data=df_plotp,aes(x=data,y=li),color="grey", size=1) +
-    geom_line(data=df_plotp,aes(x=data,y=ls),color="grey", size=1) +
-    xlab(paste('Data (frequencia ', x_labgraf, ')',sep='')) +
-    ylab('Utilização (%)') + ggtitle(v_titgraf) + scale_x_date(labels = date_format("%m/%Y"))
-  return(ggpl_grafico)
-}
-
-#' Default summary for Cross-validation forecasts
-#'
-#' Summarizes \code{cvforecast} classed objects. The output is statistics about the best models fited by \code{cvforecast} function. It may include residual tests results and simple accuracy, cross-validation accuracy and a plot for the models.
-#' @param obj \code{cvforecast} object
-#' @param digits number of digits for the default print output
-#' @param plot if TRUE, plot forecast for best models
-#' @param accuracy.best if TRUE, compute simple accuracy statistics for the best final models
-#' @param cv.accuracy if TRUE, compute accuracy of the cross-validation points from 1 to horizon
-#' @author LOPES, J. L.
-#' @seealso \code{\link{cvforecast}}, \code{\link{accuracy}}, \code{\link{Mresid}}
-#' @export
-summary.cvforecast <- function(obj, digits = 4, plot=TRUE, accuracy.best = TRUE, cv.accuracy = FALSE) {
-  if(class(obj) != "cvforecast") stop("'cvforecast' required!\n")
-  
-  res <- ldply(obj$melhores, function(X) {
-    tmp <- Try_error(Mresid(X))
-    if(class(tmp)!="try-error") tmp else NULL
-  })
-  cat("-----------------------------------------------------------------------\n")
-  cat("Residual Analysis for the best models!\n")
-  print(res, digits = digits)
-  cat("-----------------------------------------------------------------------\n")
-  
-  cv.best <- if (accuracy.best) {
-    tmp <- ldply(obj$melhores, function(X) {
-      tmp <- Try_error(accuracy(X))
-      if(class(tmp) !="try-error") tmp else NULL
-    })
-    cat("-----------------------------------------------------------------------\n")
-    cat("Accuracy for the best models!\n")
-    print(tmp, digits = digits)
-    cat("-----------------------------------------------------------------------\n")
-  }
-
-  cv.ac <- if (cv.accuracy) {
-    cat("-----------------------------------------------------------------------\n")
-    cat("Cross-Validation Accuracy for the best models!\n")
-    print(obj$acuracia, digits = digits)
-    cat("-----------------------------------------------------------------------\n")
-    } else NULL
-  
-  if(plot) plot(obj)
-  return(invisible(list(cv.best=cv.best, cv.ac=cv.ac, residuals = res)))
-}
-

@@ -13,7 +13,7 @@ cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
 \item{tsControl}{generic contol with several args for the modelling process. See
 \code{\link{cvForecastControl}}.}
 
-\item{fcMethod}{accept the forecast method fefined by the user. This argument can be a string or a list, eg. fcMethod = "etsForecast" or a list as fcMethod = list("etsForecast", "HWsForecast"). If NULL, decision is made automatically.}
+\item{fcMethod}{accept the forecast method fefined by the user. This argument can be a string or a list, eg. fcMethod = "fc_ets" or a list as fcMethod = list("fc_ets", "fc_hws"). If NULL, decision is made automatically.}
 
 \item{...}{other arguments}
 }

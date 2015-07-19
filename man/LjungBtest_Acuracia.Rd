@@ -16,7 +16,7 @@ Performs Ljung and Box test and also Durbin-Watson both for autocorrelation on t
 }
 \examples{
 x <- AirPassengers
-fit <- auto.arimaForecast(x, h = 10, onlyfc=FALSE)
+fit <- fc_auto.arima(x, h = 10, onlyfc=FALSE)
 LjungBtest_Acuracia(fit)
 plot(fit)
 }

@@ -9,7 +9,7 @@ switch.cvforecast(x, nmodelo, h, level = 95, onlyfc = FALSE)
 \arguments{
 \item{x}{'ts' data}
 
-\item{nmodelo}{string with forecast wraper, eg. etsForecast}
+\item{nmodelo}{string with forecast wraper, eg. fc_ets}
 
 \item{h}{forecast horizon}
 
@@ -26,7 +26,7 @@ forecasts from ts data or an object of class 'forecast'
 Auxiliary switcher that helps the forecasting process. If you pass it a forecast wrapper it returns the forecast model.
 }
 \examples{
-fit <- switch.cvforecast(AirPassengers, "etsForecast", h=20, level=95)
+fit <- switch.cvforecast(AirPassengers, "fc_ets", h=20, level=95)
 class(fit)
 plot(fit)
 }
