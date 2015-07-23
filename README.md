@@ -3,8 +3,7 @@ Forecast time-series by cross-validation method and choose the best models autom
 It contains functions to perform cross-validation and to help decision on the best models according to some
 goodness of fit statistics, say: MAPE, MAE, RMSE, etc. Ideas like linearity and trend are used to help decision process.
 
-Note: Some R code are functions adapted from here <a href="https://github.com/zachmayer/cv.ts">cv.ts</a> (thanks)
-
+Note: Contains some R functions from the non-official package <a href="https://github.com/zachmayer/cv.ts">cv.ts</a> (thanks)
 
 To install code run
 ```{R}
