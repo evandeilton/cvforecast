@@ -4,7 +4,7 @@
 \alias{plot.cvforecast}
 \title{Default plot for Cross-validation forecast}
 \usage{
-plot.cvforecast(obj, ...)
+\method{plot}{cvforecast}(obj, ...)
 }
 \arguments{
 \item{obj}{\code{cvforecast} object. See \code{\link{cvforecast}}}
