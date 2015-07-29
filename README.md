@@ -35,14 +35,14 @@ Define cross validation parameters
 ```{R}
 require("cvforecast")
 myControl <- cvForecastControl(
-minObs = 14,                     # minimum of observations
-stepSize = 10,                   # step size for resampling
-maxHorizon = 30,                 # forecast horizon
-summaryFunc=tsSummary,           # function to sumarize cross-validation accuracy
-cvMethod="MAPE",                 # accuracy statistic choice for decicion
-tsfrequency='day',               # data frequency
-OutlierClean=FALSE,              # clean outlier in data
-dateformat='%d/%m/%Y %H:%M:%S')  # date format is factor or character
+          minObs = 14,                     # minimum of observations
+          stepSize = 10,                   # step size for resampling
+          maxHorizon = 30,                 # forecast horizon
+          summaryFunc=tsSummary,           # function to sumarize cross-validation accuracy
+          cvMethod="MAPE",                 # accuracy statistic choice for decicion
+          tsfrequency='day',               # data frequency
+          OutlierClean=FALSE,              # clean outlier in data
+          dateformat='%d/%m/%Y %H:%M:%S')  # date format is factor or character
 ```
 Paralell execution improves the processing time
 
@@ -64,15 +64,15 @@ Looping for several forecasts
 ```{R}
 require("plyr")
 FF <- llply(tsdata, function(X) {
-fit <- try(cvforecast(X, myControl))
-if(class(fit) != "try-error") {
-return(fit)
-} else NA
+          fit <- try(cvforecast(X, myControl))
+          if(class(fit) != "try-error") {
+          return(fit)
+          } else NA
 }, .progress = "time")
 ```
 Summary statistics for first list of best models from the first variable.
 ```{R}
-summary.cvforecast(FF[[1]])
+summary(FF[[1]])
 plot(FF[[1]])
 str(FF[[1]])
 stopCluster(cl)
