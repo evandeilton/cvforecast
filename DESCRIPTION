@@ -8,7 +8,7 @@ Maintainer: <evandeilton@gmail.com>
 Description: Through several kind of forecasting methods makes CrossValidation and choose best models automatically.
 License: MIT
 LazyData: TRUE
-Depends: xts, plyr
-Imports: forecast, foreach, lmtest, TSA, rkt, tseries, zoo, lubridate, boot
+Depends: xts, plyr, forecast
+Imports: foreach, lmtest, TSA, rkt, tseries, zoo, lubridate, boot
 NeedsCompilation: no
 Packaged: 2015-07-03 20:15:08 UTC; G0047743
