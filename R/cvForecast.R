@@ -222,7 +222,7 @@ cvforecast <- function(tsdata, tsControl=cvForecastControl(), fcMethod = NULL, .
 	out1$melhores <- best_models
 	out1$cv_stat  <- estatisticas[, names(best_models), drop=FALSE]
 	out1$acuracia <- STATS
-	out1$myControl<- myControl
+	out1$myControl<- tsControl
 	class(out1) <- "cvforecast"
 	return(invisible(out1))
 }

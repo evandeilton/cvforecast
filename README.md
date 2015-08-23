@@ -9,7 +9,7 @@ To install code run
 ```{R}
 devtools::install_github('evandeilton/cvforecast')
 ```
-Note: There are lots of undocumented code. This is a very unsafe experiment I'm not a R programming guy!
+Note: There are lots of undocumented code. Use it as your own risk. If you want to help improve, please add comments in the Issues section!
 
 # Examples
 ##  cvforecast
@@ -21,11 +21,12 @@ This is the core function of the package. It computes multiple forecasts by the 
 cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
 
 # Args
-tsdata    #data.frame type date-value, ts, mts or xts time series objects
-tsControl #generic contol with several args for the modelling process. 
-fcMethod  #accept the forecast method fefined by the user. This argument can
-          #be a string or a list, eg. fcMethod = "etsForecast" or a list as 
-          #fcMethod = list("etsForecast", "HWsForecast"). If NULL, decision is made automatically.
+tsdata    # data.frame type date-value, ts, mts or xts time series object
+tsControl # generic control with several args for the modelling process. 
+fcMethod  # accept the forecast method fefined by the user. This argument 
+          # can be a string or a list, eg. fcMethod = "fc_ets" or a list as 
+          # fcMethod = list("fc_ets", "fc_hws"). If NULL, decision is made
+          # automatically.
 ```
 
 #### Run cvforecast example
@@ -34,42 +35,44 @@ Define cross validation parameters
 ```{R}
 require("cvforecast")
 myControl <- cvForecastControl(
-minObs = 14,                     # minimum of observations
-stepSize = 10,                   # step size for resampling
-maxHorizon = 30,                 # forecast horizon
-summaryFunc=tsSummary,           # function to sumarize cross-validation accuracy
-cvMethod="MAPE",                 # accuracy statistic for decicion
-tsfrequency='day',               # data points frequencies
-OutlierClean=FALSE,              # clean outlier in the data preparation
-dateformat='%d/%m/%Y %H:%M:%S')  # date format as it is char
+          minObs = 14,                     # minimum of observations
+          stepSize = 10,                   # step size for resampling
+          maxHorizon = 30,                 # forecast horizon
+          summaryFunc=tsSummary,           # function to sumarize cross-validation accuracy
+          cvMethod="MAPE",                 # accuracy statistic choice for decicion
+          tsfrequency='day',               # data frequency
+          OutlierClean=FALSE,              # clean outlier in data
+          dateformat='%d/%m/%Y %H:%M:%S')  # date format is factor or character
 ```
 Paralell execution improves the processing time
 
 ```{R}
 require("doParallel")             # extra package for paralelization
 cl <- makeCluster(4, type='SOCK') # 4 is the number os logical cores. Edit as your own!
-registerDoParallel(cl)            # Register cluster
+registerDoParallel(cl)            # register cluster
 ```
 Load data and convert to 'ts'
 ```{R}
 data(datasample, package="cvforecast")
-tsdata <- ConvertData(datasample[,1:6], dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day", OutType="ts")
+tsdata <- ConvertData(datasample[,1:6], 
+                    dateformat='%d/%m/%Y %H:%M:%S', tsfrequency = "day",
+                    OutType="ts")
 table(sapply(tsdata, class))      # check class to confirm conversions
 dim(tsdata)
 ```
 Looping for several forecasts
 ```{R}
 require("plyr")
-FF <- llply(tsdata[,1:5], function(X) {
-fit <- try(cvforecast(X, myControl))
-if(class(fit) != "try-error") {
-return(fit)
-} else NA
+FF <- llply(tsdata, function(X) {
+          fit <- try(cvforecast(X, myControl))
+          if(class(fit) != "try-error") {
+          return(fit)
+          } else NA
 }, .progress = "time")
 ```
 Summary statistics for first list of best models from the first variable.
 ```{R}
-summary.cvforecast(FF[[1]])
+summary(FF[[1]])
 plot(FF[[1]])
 str(FF[[1]])
 stopCluster(cl)

@@ -1,8 +1,8 @@
 Package: cvforecast
 Type: Package
 Title: Multiple forecasts based on CrossValidation
-Version: 1.4
-Date: 2015-07-14
+Version: 1.5
+Date: 2015-08-21
 Author: Jose E Lopes
 Maintainer: <evandeilton@gmail.com>
 Description: Through several kind of forecasting methods makes CrossValidation and choose best models automatically.
