@@ -109,7 +109,7 @@ cvts2 <- function(x, FUN, tsControl=cvForecastControl(), progress=TRUE, packages
 	}
 
 	#At each point in time, calculate 'maxHorizon' forecasts ahead
-	forecasts <- foreach(i=steps, .combine=combine, .multicombine=FALSE, .packages=c('forecast', 'caret', packages), .export=c('testObject', 'tsSummary', 'cvForecastControl')) %dopar% {
+	forecasts <- foreach(i=steps, .combine=combine, .multicombine=FALSE, .packages=c('forecast', packages), .export=c('testObject', 'tsSummary', 'cvForecastControl')) %dopar% {
 
 		if (fixedWindow) {
 			xshort <- window(x, start = st+(i-minObs+1)/freq, end = st+i/freq)
@@ -1429,7 +1429,7 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
 
 	#if(!class(objcvfore) %in% c("forecast","cvforecast")) stop("Objeto deve ser de classe 'cvforecast'")
 
-	## Análise de residuos dos modelos
+	## AnÃ¡lise de residuos dos modelos
     Resid <- try(plyr::ldply(objcvfore, function(X) {
     if (class(X)[1] != "try-error") {
       sm <- sum(Mresid(X) > residlevel)
@@ -1443,7 +1443,7 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
 		Resid <- Filter(Negate(function(X) is.null(unlist(X))), Resid)
 		names(Resid) <- c(".id","RESID.PVALUE")
 
-		# Cria rank de resíduo
+		# Cria rank de resÃ­duo
 		Resid$RES.RANK <- rank(Resid$RESID.PVALUE, na.last = TRUE, ties.method = "first")
 		Resid <- Resid[,-2]
 	} else {
@@ -1459,7 +1459,7 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
 	}))
 	if(class(STATS) != "try-error") {
 		STATS <- Filter(Negate(function(X) is.null(unlist(X))), STATS)
-	    ## Cria rank de estatística de bondade
+	    ## Cria rank de estatÃ­stica de bondade
 		STATS$RESID.GOF <- rank(STATS[,cvMethod], na.last = TRUE, ties.method = "first")
 	} else {
 		STATS <- data.frame(.id=NA, ME=NA, RMSE=NA, MAE=NA, MPE=NA, MAPE=NA, MASE=NA, ACF1=NA, RESID.GOF=NA)
@@ -1512,7 +1512,7 @@ Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
 
 	out <- as.data.frame(t(round(c(Mediana = mediana, DesvP = desviop, "Media+DesvP" = meddesv, Nulos = na + null, Min = minimo, Max = maximo, CV = cv), dig)))
 
-	# Funcao para intervalode confiança da média
+	# Funcao para intervalode confianÃ§a da mÃ©dia
     cimean<- function(x, i, ...) {
 		m <- mean(x[i])
 		n <- length(i)
@@ -1521,7 +1521,7 @@ Desc <- function(dados, nivel=0.95, tipoci = "basic", nsimu = 500, dig=2) {
     }
 	da.boot <- boot(x, cimean, R = nsimu)
 
-	# A função sink permite omitir textos de print() e também de cat()
+	# A funÃ§Ã£o sink permite omitir textos de print() e tambÃ©m de cat()
 	sink(tempfile())
 	    B <- boot.ci(da.boot, conf = nivel, type = tipoci)
 	sink()
