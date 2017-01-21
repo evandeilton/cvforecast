@@ -1,6 +1,6 @@
 #' Core function to compute multiple forecasts by Cross-Validation
 #'
-#' This the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models are based on tests as linearity, trend and fit accuracy.
+#' This is the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models are based on tests as linearity, trend and fit accuracy.
 #'
 #' @param tsdata data.frame type date-value, ts, mts or xts time series objects
 #' @param tsControl generic contol with several args for the modelling process. See
@@ -49,7 +49,7 @@
 #'sapply(FF, names)
 #'#stopCluster(cl)
 #'@export
-cvforecast <- function(tsdata, tsControl=cvForecastControl(), fcMethod = NULL, ...) {
+cvforecast <- function(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...) {
 	h <- tsControl$maxHorizon
 	cvMethod <- toupper(tsControl$cvMethod)
 	tsfrequency  <- tsControl$tsfrequency

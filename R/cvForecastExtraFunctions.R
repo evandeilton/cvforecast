@@ -725,12 +725,12 @@ fc_holt <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
-#' @examples
-#' fit <- fc_hw(AirPassengers, h=10, onlyfc = FALSE)
-#' plot(fit)
-#' Mresid(fit)
-#' tsSummary(fit)
-#' @export
+#' #@examples
+#' #fit <- fc_hw(AirPassengers, h=10, onlyfc = FALSE)
+#' #plot(fit)
+#' #Mresid(fit)
+#' #tsSummary(fit)
+#' #@export
 fc_hw <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 	## Check Seasonality, if YES, use Holt, else use HW
 	if (sum(cycle(x))==length(x)) {
@@ -844,7 +844,7 @@ fc_hwes <- function(x, h, level=95, onlyfc=TRUE, ...) {
 switch.cvforecast <- function(x, nmodelo, h, level=95, onlyfc=FALSE) {
   switch(nmodelo,
 		fc_sts = fc_sts(x, h=h, level=level, onlyfc=onlyfc),
-		fc_hw = fc_hw(x, h=h, level=level, onlyfc=onlyfc),
+		#fc_hw = fc_hw(x, h=h, level=level, onlyfc=onlyfc),
 		fc_tbats = fc_tbats(x, h=h, level=level),
 		fc_auto.arima = fc_auto.arima(x, h=h, level=level, onlyfc=onlyfc),
 		#fc_stl   = fc_stl(x, h=h, level=level),
@@ -1158,7 +1158,7 @@ Start <- function(freq, tdata) {
 #' lm_press_stat(fit)
 #' @export
 lm_press_stat <- function(obj) {
-	if(class(obj)!="lm") stop("Only 'lm' models are allowed!\n")
+	if(class(obj)[1]!="lm") stop(paste("Only lm models are allowed!"))
 	PRESS <- function(obj) {
 	  #' calculate the predictive residuals
 	  pr <- residuals(obj)/(1-lm.influence(obj)$hat)
