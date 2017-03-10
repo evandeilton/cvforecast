@@ -44,7 +44,7 @@ cvForecastControl <- function (stepSize = 1, maxHorizon = 1, minObs = 7, fixedWi
 #' @return list with information about then cross-validation like forecasts and accuracy
 #' @examples
 #' # Control
-#' myControl <- cvForecastControl(
+#' tsControl <- cvForecastControl(
 #' minObs = 14,
 #' stepSize = 10,
 #' maxHorizon = 30,
@@ -109,7 +109,11 @@ cvts2 <- function(x, FUN, tsControl=cvForecastControl(), progress=TRUE, packages
 	}
 
 	#At each point in time, calculate 'maxHorizon' forecasts ahead
-	forecasts <- foreach(i=steps, .combine=combine, .multicombine=FALSE, .packages=c('forecast', packages), .export=c('testObject', 'tsSummary', 'cvForecastControl')) %dopar% {
+	forecasts <- foreach(i=steps, .combine=combine,
+	                     .multicombine=FALSE,
+	                     .packages=c('forecast', packages),
+	                     .export=c('testObject', 'tsSummary', 'cvForecastControl')
+	                     ) %dopar% {
 
 		if (fixedWindow) {
 			xshort <- window(x, start = st+(i-minObs+1)/freq, end = st+i/freq)
@@ -251,7 +255,7 @@ correlation <- function(tabela_y, tabela_x=NULL, method = "pearson", digits = 4,
 #' @export
 forecastMethod <- function(x) {
   if(is.null(x) | length(as.numeric(x)) < 8) {
-    stop(cat("Poucos dados", length(as.numeric(x)), "\n"))
+    stop(cat("Need more data!", length(as.numeric(x)), "\n"))
   }
   if (class(x)[1]!='ts' & class(x)[1] == "numeric"){
     x <- ts(x, frequency=1)
@@ -274,7 +278,7 @@ forecastMethod <- function(x) {
     linear  <- Try_error(na.omit(sapply(nlTests,  function(n) linearityTest(x, n)$p.value)))
 
     if (class(linear)[1] == "numeric") {
-      linear <- ifelse(sum(linear > 0.01) < 5, TRUE, FALSE)
+      linear <- ifelse(sum(linear > 0.05) < 5, TRUE, FALSE)
     } else {
       linear <- TRUE
     }
@@ -380,13 +384,13 @@ tsSummary <- function(P, A) {
 #'
 #' @return forecasts from ts data or an object of class 'forecast'
 #' @examples
-#' fit <- fc_mean(AirPassengers, h=10, onlyfc = FALSE)
+#' fit <- fc_mean(AirPassengers, h=10, level = 95, onlyfc = FALSE)
 #' plot(fit)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
 fc_mean <- function(x, h, level = 95, onlyfc=TRUE, ...) {
-  fc <- forecast::meanf(x, h, ..., level = level)
+  fc <- forecast::meanf(y = x, h = h, level = level, ...)
   if (onlyfc) fc$mean
   else fc
 }
@@ -405,7 +409,7 @@ fc_mean <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' tsSummary(fit)
 #' @export
 fc_naive <- function(x, h, level = 95, onlyfc=TRUE, ...) {
-  fc <- forecast::naive(x, h, ..., level=level)
+  fc <- forecast::naive(y = x, h = h, level=level, ...)
   if (onlyfc) fc$mean
   else fc
 }
@@ -424,7 +428,7 @@ fc_naive <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' tsSummary(fit)
 #' @export
 sfc_naive <- function(x, h, level = 95, onlyfc=TRUE, ...) {
-  fc <- forecast::snaive(x, h, ..., level=level)
+  fc <- forecast::snaive(y = x, h = h, level=level, ...)
   if (onlyfc) fc$mean
   else fc
 }
@@ -442,8 +446,8 @@ sfc_naive <- function(x, h, level = 95, onlyfc=TRUE, ...) {
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_rw <- function(x,h,level=95, onlyfc=TRUE, ...) {
-  fc <- forecast::rwf(x, h, ..., level=level)
+fc_rw <- function(x, h, level=95, onlyfc=TRUE, ...) {
+  fc <- forecast::rwf(y = x, h = h, level=level, ...)
   if (onlyfc) fc$mean
   else fc
 }
@@ -462,7 +466,7 @@ fc_rw <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' tsSummary(fit)
 #' @export
 fc_theta <- function(x,h,level=95, onlyfc=TRUE, ...) {
-  fc <- forecast::thetaf(x, h, ..., level=level)
+  fc <- forecast::thetaf(y = x, h = h, level=level, ...)
   if (onlyfc) fc$mean
   else fc
 }
@@ -482,7 +486,7 @@ fc_theta <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_lm <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
+fc_lm <- function(x, h, level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
   x <- data.frame(x)
   colnames(x) <- 'x'
   if (is.null(xreg) & is.null(newxreg)) {
@@ -526,7 +530,7 @@ fc_lm <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_sts <- function(x,h,level=95,  onlyfc=TRUE, ...) {
+fc_sts <- function(x, h, level=95,  onlyfc=TRUE, ...) {
   fit <- StructTS(x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
@@ -547,30 +551,8 @@ fc_sts <- function(x,h,level=95,  onlyfc=TRUE, ...) {
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_stl <- function(x, h, level=95, method='ets',  onlyfc=TRUE, ...) {
-  fc <- forecast::stlf(x, h=h, method=method, level=level, ...)
-  if (onlyfc) fc$mean
-  else fc
-}
-
-#' Arima forecast wrapper
-#' @param x 'ts' data
-#' @param h forecast horizon
-#' @param level confidence level. Default is 0.95
-#' @param onlyfc if TRUE return only forecasts, otherwise returns a full forecast classed object
-#' @param xreg in ARIMA model with covariates it's must be provide
-#' @param newxreg in ARIMA model with covariates it's must be provide for forecasting the covariates
-#' @param ... extra args, if needed.
-#' @return forecasts from ts data or an object of class 'forecast'
-#' @examples
-#' fit <- fc_arima(AirPassengers, h=10, onlyfc = FALSE)
-#' plot(fit)
-#' Mresid(fit)
-#' tsSummary(fit)
-#' @export
-fc_arima <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
-  fit <- forecast::Arima(x, xreg=xreg, ...)
-  fc <- forecast::forecast(fit, h=h, level=level, xreg=newxreg)
+fc_stl <- function(x, h, level=95, method='arima', onlyfc=TRUE, ...) {
+  fc <- forecast::stlf(y = x, h = h, method = method, level=level, ...)
   if (onlyfc) fc$mean
   else fc
 }
@@ -590,8 +572,8 @@ fc_arima <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_auto.arima <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
-  fit <- forecast::auto.arima(x, xreg=xreg, ...)
+fc_auto.arima <- function(x, h, level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...) {
+  fit <- forecast::auto.arima(y = x, xreg = xreg, ...)
   fc <- forecast::forecast(fit, h=h, level=level, xreg=newxreg)
   if (onlyfc) fc$mean
   else fc
@@ -610,8 +592,8 @@ fc_auto.arima <- function(x,h,level=95, onlyfc=TRUE, xreg=NULL,newxreg=NULL,...)
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_ets <- function(x,h,level=95, onlyfc=TRUE, ...) {
-  fit <- forecast::ets(x, ...)
+fc_ets <- function(x, h, level=95, onlyfc=TRUE, ...) {
+  fit <- forecast::ets(y = x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
   else fc
@@ -630,8 +612,8 @@ fc_ets <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_bats <- function(x,h,level=95, onlyfc=TRUE, ...) {
-  fit <- forecast::bats(x, ...)
+fc_bats <- function(x, h, level=95, onlyfc=TRUE, ...) {
+  fit <- forecast::bats(y =x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
   else fc
@@ -650,8 +632,8 @@ fc_bats <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' Mresid(fit)
 #' tsSummary(fit)
 #' @export
-fc_tbats <- function(x,h,level=95, onlyfc=TRUE, ...) {
-  fit <- forecast::tbats(x, ...)
+fc_tbats <- function(x, h, level=95, onlyfc=TRUE, ...) {
+  fit <- forecast::tbats(y = x, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
   else fc
@@ -672,7 +654,7 @@ fc_tbats <- function(x,h,level=95, onlyfc=TRUE, ...) {
 #' tsSummary(fit)
 #' @export
 fc_nnetar <- function(x, h, level=95,  onlyfc=TRUE, nn_p=1, ...) {
-  fit <- forecast::nnetar(x, p=nn_p, ...)
+  fit <- forecast::nnetar(y = x, p = nn_p, ...)
   fc <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
   else fc
@@ -692,8 +674,8 @@ fc_nnetar <- function(x, h, level=95,  onlyfc=TRUE, nn_p=1, ...) {
 #' tsSummary(fit)
 #' @export
 fc_ses <- function(x, h, level=95, onlyfc=TRUE, ...) {
-  fit <- forecast::ses(x, h=h, level=level, ...)
-  fc  <- forecast::forecast(fit, h=h, level=level)
+  fit <- forecast::ses(y = x, h = h, level = level, ...)
+  fc  <- forecast::forecast(fit, h = h, level = level)
   if (onlyfc) fc$mean
   else fc
 }
@@ -712,7 +694,7 @@ fc_ses <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #' tsSummary(fit)
 #' @export
 fc_holt <- function(x, h, level=95,  onlyfc=TRUE, ...) {
-  fit <- forecast::holt(x, h=h, level=level, ...)
+  fit <- forecast::holt(y = x, h = h, level=level, ...)
   fc  <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
   else fc
@@ -726,22 +708,53 @@ fc_holt <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' @param ... extra args, if needed.
 #' @return forecasts from ts data or an object of class 'forecast'
 #' #@examples
-#' #fit <- fc_hw(AirPassengers, h=10, onlyfc = FALSE)
+#' #fit <- fc_hw(lynx, h=10, onlyfc = FALSE)
 #' #plot(fit)
 #' #Mresid(fit)
 #' #tsSummary(fit)
 #' #@export
 fc_hw <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 	## Check Seasonality, if YES, use Holt, else use HW
-	if (sum(cycle(x))==length(x)) {
-		fit <- forecast::holt(x, ...)
+	if (sum(cycle(x)) == length(x)) {
+		fit <- forecast::holt(y = x, h = h, level = level, ...)
 	} else {
-		fit <- forecast::hw(x, ...)
+		fit <- forecast::hw(y = x, h = h, level = level, ...)
 	}
 
   fc  <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
   else fc
+}
+
+
+
+#' Seasolaity detection test
+#' 
+#' This function perform a simple test for seasonality test based on http://robjhyndman.com/hyndsight/detecting-seasonality/.
+#' The idea is to perform a chi-squared test for the deviance on two forecst models of type ETS. The first model is an automated ETS model and the second is a ETS model with fixed seasonal component. The NULL is that the data has a seasonal component. If chisq p.value is greater than (1-level) then reject NULL.
+#' 
+#' @note Due this function performs two ETS forecast inside ir. It can be slow.
+#' 
+#' @param x 'ts' data to be tested
+#' @param level significance value to test the null hypothesis that the data has a seasonal pattern.
+#' @return bolean TRUE or FALSE
+#' @examples 
+#' par(mfrow = c(2,1))
+#' plot(AirPassengers)
+#' plot(lynx)
+#' DetectSeasonality(AirPassengers)
+#' DetectSeasonality(lynx)
+#' par(mfrow = c(1,1))
+#' @author LOPES, J. E.
+#' #@export
+#' 
+DetectSeasonality <- function(x, level = 0.95){
+  f0 <- ets(x)
+  f1 <- ets(x, model = "ANN")
+  de <- 2*c(logLik(f0) - logLik(f1))
+  df <- attributes(logLik(f0))$df - attributes(logLik(f1))$df 
+  oo <- 1-pchisq(deviance,df)
+  return(oo < 1-level)
 }
 
 #' Meanf forecast wrapper
@@ -758,7 +771,7 @@ fc_hw <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' tsSummary(fit)
 #' @export
 fc_mean <- function(x, h, level=95,  onlyfc=TRUE, ...) {
-  fit <- forecast::meanf(x, ...)
+  fit <- forecast::meanf(y = x, h = h, level=level,  ...)
   fc  <- forecast::forecast(fit, h=h, level=level)
   if (onlyfc) fc$mean
   else fc
@@ -843,16 +856,15 @@ fc_hwes <- function(x, h, level=95, onlyfc=TRUE, ...) {
 #'@export
 switch.cvforecast <- function(x, nmodelo, h, level=95, onlyfc=FALSE) {
   switch(nmodelo,
-		fc_sts = fc_sts(x, h=h, level=level, onlyfc=onlyfc),
-		#fc_hw = fc_hw(x, h=h, level=level, onlyfc=onlyfc),
-		fc_tbats = fc_tbats(x, h=h, level=level),
+		fc_sts    = fc_sts(x, h=h, level=level, onlyfc=onlyfc),
+		fc_hw     = fc_hw(x, h=h, level=level, onlyfc=onlyfc),
+		fc_tbats  = fc_tbats(x, h=h, level=level),
 		fc_auto.arima = fc_auto.arima(x, h=h, level=level, onlyfc=onlyfc),
-		#fc_stl   = fc_stl(x, h=h, level=level),
+		fc_stl    = fc_stl(x, h=h, level=level),
 		fc_ses    = fc_ses(x, h=h, level=level, onlyfc=onlyfc),
 		fc_holt   = fc_holt(x, h=h, level=level, onlyfc=onlyfc),
 		fc_bats   = fc_bats(x, h=h, level=level, onlyfc=onlyfc),
 		fc_ets    = fc_ets(x, h=h, level=level, onlyfc=onlyfc),
-		fc_arima  = fc_arima(x, h=h, level=level, onlyfc=onlyfc),
 		fc_lm     = fc_lm(x, h=h, level=level, onlyfc=onlyfc),
 		fc_theta  = fc_theta(x, h=h, level=level, onlyfc=onlyfc),
 		fc_rw     = fc_rw(x, h=h, level=level, onlyfc=onlyfc),
@@ -929,27 +941,27 @@ Try_error <- function(code, silent = TRUE) {
 #' Linearity tests
 #'
 #' Compute six linearity tests among Terasvirta, White, Keenan, McleodLi, Tsay and Tar.
-#' @seealso See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{McLeod.Li.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
+#' @seealso See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
 #' @param x 'ts' data
-#' @param Test string containing test's names. They are "terasvirta", "white", "keenan", "mcleodLi", "tsay", "tarTest".
+#' @param Test string containing test's names. They are "terasvirta", "white", "keenan", "tsay", "tarTest".
 #' @author LOPES, J. E.
 #' @return data.frame with tests statistics and p.values
 #' @examples
 #' linearityTest(AirPassengers)
 #' linearityTest(AirPassengers, Test="tsay")
 #' @export
-linearityTest <- function(x, Test) {
+linearityTest <- function(x, Test, all = FALSE) {
 	if (class(x)[1] != "ts") x <- ts(x)
 	if (missing(Test)) Test <- "keenan"
 	else {
-		Test <- match.arg(Test, c("terasvirta","white", "keenan", "mcleodLi", "tsay","tarTest"))
+		Test <- match.arg(Test, c("terasvirta","white", "keenan", "tsay","tarTest"))
 	}
 
 	test <- switch(Test,
 			terasvirta = tseries::terasvirta.test(x = x, type = "Chisq"),
 			white = tseries::white.test(x),
 			keenan = TSA::Keenan.test(x),
-			mcleodLi = TSA::McLeod.Li.test(y = x, plot = FALSE),
+			#mcleodLi = TSA::McLeod.Li.test(y = x, plot = FALSE),
 			tsay = TSA::Tsay.test(x),
 			tarTest = TSA::tlrt(x)
 	)
@@ -964,12 +976,21 @@ linearityTest <- function(x, Test) {
 		out <- data.frame(statistic = test$test.stat, p.value = test$p.value)
 	} else if (Test == "tarTest") {
 		out <- data.frame(statistic = test$test.stat, p.value = test$p.value)
-	} else if (Test == "mcleodLi") {
-		out <- data.frame(statistic = NA, p.value = max(unlist(test$p.values)))
 	} else {
 		cat("Nenhum dos testes se aplica!\n\n")
 	}
 
+	if(all) {## recursive sapply
+	  dd <- do.call("rbind",
+	                as.data.frame(sapply(c("terasvirta","white", "keenan", "tsay","tarTest"), 
+	                                       function(i, ...) {
+	                                         o <- try(linearityTest(x = x, Test = i))
+	                                         if(class(o)[1] != "try-error") o else NULL
+	                                       }))
+	  )
+	  return(suppressMessages(suppressWarnings(dd)))
+	 }
+	
 	out <- round(out, 4)
 	rownames(out) <- Test
 	return(out)
@@ -1082,9 +1103,9 @@ ConvertData <- function(Data, tsfrequency = "day", dateformat='%d/%m/%Y %H:%M:%S
 #' @author LOPES, J. E.
 #' @return A lista conatining data transformed to ts and a date sequency for the forecasts
 #' @examples
-#'x <- ForecastHorizon(rnorm(100), 'day',20)
-#'str(x)
-#' data(datasample)
+#' x <- ForecastHorizon(rnorm(100), 'day',20)
+#' str(x)
+#' data(datasample, package = "cvforecast")
 #' y <- ConvertData(datasample[,1:2], tsfrequency = "day", OutType = "xts")
 #' y <- ForecastHorizon(y, 'day', 20)
 #' @export
@@ -1102,12 +1123,14 @@ ForecastHorizon <- function(XtsData, tsfrequency, horizon) {
 	} else {freq <- 1}
 
 	if (class(XtsData)[1] %in% c("ts","numeric")) {
-		SE <- seq(as.POSIXct(Sys.Date(), tz = "UTC"), by = tsfrequency, l=horizon)
 
 		if (class(XtsData)[1] == "numeric") {
 			x <- ts(XtsData, frequency=freq)
-		} else x <- XtsData
-
+			SE <- seq(as.POSIXct(Sys.Date(), tz = "GMT"), by = tsfrequency, l=horizon)
+		} else {
+		  x <- XtsData
+		  SE <- seq(max(as.POSIXct(as.Date(time(x))+1,tz = "GMT")), by = tsfrequency, l=horizon)
+		}
 		return(list(x, FCHorizon = SE))
 	} else {
 		IndexXTS <- index(XtsData)
@@ -1198,7 +1221,7 @@ lm_press_stat <- function(obj) {
 #' @examples
 #' dates <- as.character(as.POSIXct(as.Date(time(AirPassengers))+1))
 #' value <- as.numeric(AirPassengers)
-#' dateformat <- "%Y-%m-%d %H:%M:%S"
+#' dateformat <- "%Y-%m-%d"
 #' y <- TimeSeries(dates, dateformat, value)
 #' @export
 TimeSeries<-function(dates, dateformat, data = NULL, tz = "GMT")
@@ -1433,9 +1456,9 @@ cvBestModel <- function(objcvfore, cvMethod = "MAPE", residlevel = 0.10, ...) {
     Resid <- try(plyr::ldply(objcvfore, function(X) {
     if (class(X)[1] != "try-error") {
       sm <- sum(Mresid(X) > residlevel)
-	  sm[sm %in% c(Inf, -Inf, NA, NULL)] <- 99
-	  sm
-    } else NULL # Trata casos de erros com -9
+      sm[sm %in% c(Inf, -Inf, NA, NULL)] <- 99
+      sm
+    } else NULL
 	}))
 
 	if (class(Resid) != "try-error") {
