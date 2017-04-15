@@ -4,7 +4,7 @@
 \alias{fc_stl}
 \title{Stl forecast wrapper}
 \usage{
-fc_stl(x, h, level = 95, method = "ets", onlyfc = TRUE, ...)
+fc_stl(x, h, level = 95, method = "arima", onlyfc = TRUE, ...)
 }
 \arguments{
 \item{x}{'ts' data}

@@ -19,14 +19,14 @@ fc_hw(x, h, level = 95, onlyfc = TRUE, ...)
 }
 \value{
 forecasts from ts data or an object of class 'forecast'
+#@examples
+#fit <- fc_hw(lynx, h=10, onlyfc = FALSE)
+#plot(fit)
+#Mresid(fit)
+#tsSummary(fit)
+#@export
 }
 \description{
 HoltWinters forecast wrapper
-}
-\examples{
-fit <- fc_hw(AirPassengers, h=10, onlyfc = FALSE)
-plot(fit)
-Mresid(fit)
-tsSummary(fit)
 }
 

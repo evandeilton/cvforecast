@@ -21,7 +21,7 @@ cvforecast(tsdata, tsControl = cvForecastControl(), fcMethod = NULL, ...)
 A list of class 'cvforecast' containing several objetcts from the forecasting process. It includes: betso models (less tahn 6), crossValidation statistics for all models, accuracy of all models, the control, etc. As below.
 }
 \description{
-This the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models are based on tests as linearity, trend and fit accuracy.
+This is the core function of the package. It computes multiple forecasts by the technique of Cross-Validation. The decision about the best models are based on tests as linearity, trend and fit accuracy.
 }
 \examples{
 #Define cross validation parameters

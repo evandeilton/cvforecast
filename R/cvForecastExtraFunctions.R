@@ -36,7 +36,7 @@ cvForecastControl <- function (stepSize = 1, maxHorizon = 1, minObs = 7, fixedWi
 #'
 #' Main function to perform cross-validation. This function was firstly created by Zach Mayer (https://github.com/zachmayer/cv.ts) thanks, and adapted by LOPES. J. E. It
 #' @param x time series object of class 'ts'
-#' @param FUN forecast wrapper function. These are some ones fc_sts, fc_hw, fc_tbats, fc_auto.arima, fc_ses, fc_mean, fc_holt, fc_bats, fc_ets, fc_arima, fc_lm, fc_theta, fc_rw, sfc_naive, fc_naive, fc_nnetar, fc_hws, fc_hwns and fc_hwes. This function works also in parallel very fast in multiple core computers.
+#' @param FUN forecast wrapper function. These are some ones fc_sts, fc_hw, fc_tbats, fc_auto.arima, fc_ses, fc_mean, fc_holt, fc_bats, fc_ets, fc_lm, fc_theta, fc_rw, sfc_naive, fc_naive, fc_nnetar, fc_hws, fc_hwns and fc_hwes. This function works also in parallel very fast in multiple core computers.
 #' @param tsControl Generic control for cross-validation process. See \code{\link{cvForecastControl}}.
 #' @param progress if TRUE, show the progress bar.
 #' @param packages extra R packages required by R. Default is NULL
@@ -733,7 +733,7 @@ fc_hw <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' This function perform a simple test for seasonality test based on http://robjhyndman.com/hyndsight/detecting-seasonality/.
 #' The idea is to perform a chi-squared test for the deviance on two forecst models of type ETS. The first model is an automated ETS model and the second is a ETS model with fixed seasonal component. The NULL is that the data has a seasonal component. If chisq p.value is greater than (1-level) then reject NULL.
 #' 
-#' @note Due this function performs two ETS forecast inside ir. It can be slow.
+#' @note Due this function performs two ETS forecast inside it. It can be slow.
 #' 
 #' @param x 'ts' data to be tested
 #' @param level significance value to test the null hypothesis that the data has a seasonal pattern.
@@ -742,11 +742,12 @@ fc_hw <- function(x, h, level=95,  onlyfc=TRUE, ...) {
 #' par(mfrow = c(2,1))
 #' plot(AirPassengers)
 #' plot(lynx)
-#' DetectSeasonality(AirPassengers)
-#' DetectSeasonality(lynx)
+#' # don't run
+#' #DetectSeasonality(AirPassengers)
+#' #DetectSeasonality(lynx)
 #' par(mfrow = c(1,1))
 #' @author LOPES, J. E.
-#' #@export
+#' @export
 #' 
 DetectSeasonality <- function(x, level = 0.95){
   f0 <- ets(x)

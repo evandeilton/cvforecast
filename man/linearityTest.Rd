@@ -4,12 +4,12 @@
 \alias{linearityTest}
 \title{Linearity tests}
 \usage{
-linearityTest(x, Test)
+linearityTest(x, Test, all = FALSE)
 }
 \arguments{
 \item{x}{'ts' data}
 
-\item{Test}{string containing test's names. They are "terasvirta", "white", "keenan", "mcleodLi", "tsay", "tarTest".}
+\item{Test}{string containing test's names. They are "terasvirta", "white", "keenan", "tsay", "tarTest".}
 }
 \value{
 data.frame with tests statistics and p.values
@@ -25,6 +25,6 @@ linearityTest(AirPassengers, Test="tsay")
 LOPES, J. E.
 }
 \seealso{
-See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{McLeod.Li.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
+See \code{\link{terasvirta.test}}, \code{\link{white.test}},\code{\link{Keenan.test}},\code{\link{Tsay.test}} and \code{\link{tlrt}}
 }
 

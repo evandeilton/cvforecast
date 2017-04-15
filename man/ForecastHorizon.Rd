@@ -22,7 +22,7 @@ Suport several data types included xts, zoo, ts or numeric. If numeric data are 
 \examples{
 x <- ForecastHorizon(rnorm(100), 'day',20)
 str(x)
-data(datasample)
+data(datasample, package = "cvforecast")
 y <- ConvertData(datasample[,1:2], tsfrequency = "day", OutType = "xts")
 y <- ForecastHorizon(y, 'day', 20)
 }

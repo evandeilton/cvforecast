@@ -10,7 +10,7 @@ cvts2(x, FUN, tsControl = cvForecastControl(), progress = TRUE,
 \arguments{
 \item{x}{time series object of class 'ts'}
 
-\item{FUN}{forecast wrapper function. These are some ones fc_sts, fc_hw, fc_tbats, fc_auto.arima, fc_ses, fc_mean, fc_holt, fc_bats, fc_ets, fc_arima, fc_lm, fc_theta, fc_rw, sfc_naive, fc_naive, fc_nnetar, fc_hws, fc_hwns and fc_hwes. This function works also in parallel very fast in multiple core computers.}
+\item{FUN}{forecast wrapper function. These are some ones fc_sts, fc_hw, fc_tbats, fc_auto.arima, fc_ses, fc_mean, fc_holt, fc_bats, fc_ets, fc_lm, fc_theta, fc_rw, sfc_naive, fc_naive, fc_nnetar, fc_hws, fc_hwns and fc_hwes. This function works also in parallel very fast in multiple core computers.}
 
 \item{tsControl}{Generic control for cross-validation process. See \code{\link{cvForecastControl}}.}
 
@@ -28,7 +28,7 @@ Main function to perform cross-validation. This function was firstly created by 
 }
 \examples{
 # Control
-myControl <- cvForecastControl(
+tsControl <- cvForecastControl(
 minObs = 14,
 stepSize = 10,
 maxHorizon = 30,

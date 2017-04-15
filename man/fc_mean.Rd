@@ -40,7 +40,7 @@ Mean forecast wrapper
 Meanf forecast wrapper
 }
 \examples{
-fit <- fc_mean(AirPassengers, h=10, onlyfc = FALSE)
+fit <- fc_mean(AirPassengers, h=10, level = 95, onlyfc = FALSE)
 plot(fit)
 Mresid(fit)
 tsSummary(fit)

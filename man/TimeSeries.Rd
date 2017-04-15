@@ -24,7 +24,7 @@ Convert a data.frame with dates and numeric values into a new one including year
 \examples{
 dates <- as.character(as.POSIXct(as.Date(time(AirPassengers))+1))
 value <- as.numeric(AirPassengers)
-dateformat <- "\%Y-\%m-\%d \%H:\%M:\%S"
+dateformat <- "\%Y-\%m-\%d"
 y <- TimeSeries(dates, dateformat, value)
 }
 
